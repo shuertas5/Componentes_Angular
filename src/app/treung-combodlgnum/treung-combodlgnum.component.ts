@@ -22,6 +22,7 @@ export class TreungCombodlgnumComponent implements OnInit {
     @Input() editable: boolean;
     @Input() valor_positivo: boolean;
     @Input() cursor: string;
+    
     ondropdown_str: string;
     ondatachange_str: string;
 
