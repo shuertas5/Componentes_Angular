@@ -10,8 +10,9 @@ declare const beep: any;
 })
 export class TreungNumerComponent implements OnInit {
 
-    @ViewChild('obj', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
+    @ViewChild('obj_numer', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
 
+    @Input() id: string;
     @Input() size: any;
     @Input() formato: any;
     @Input() value: any;
@@ -20,6 +21,8 @@ export class TreungNumerComponent implements OnInit {
     @Input() disabled = false;
     dentro = false;
     @Input() valor_positivo = false;
+    getdis = "";
+    ondatachange_str: string;
 
     @Output()
     copy: EventEmitter<string> = new EventEmitter<string>();
@@ -31,28 +34,52 @@ export class TreungNumerComponent implements OnInit {
     datachange: EventEmitter<string> = new EventEmitter<string>();
 
     constructor(private elementRef: ElementRef) {
-        this.formato = elementRef.nativeElement.getAttribute('formato');
-        this.disabled = parseBoolean(elementRef.nativeElement.getAttribute('disabled'));
-        this.size = elementRef.nativeElement.getAttribute('size');
-        this.value = elementRef.nativeElement.getAttribute('value');
-        this.valor_positivo = parseBoolean(elementRef.nativeElement.getAttribute('valor_positivo'));
+
+        Object.defineProperty(this.elementRef.nativeElement, 'value', {
+            get: () => { return this.getvalue(); },
+            set: (valo) => { this.setvalue(valo); },
+            enumerable: true
+        });
+
+        Object.defineProperty(this.elementRef.nativeElement, 'id', {
+            get: () => { return this.id; },
+            set: (valo) => { this.id = valo; },
+            enumerable: true
+        });
+
+        Object.defineProperty(this.elementRef.nativeElement, 'disabled', {
+            get: () => { return this.disabled; },
+            set: (valo) => { this.setdisabled(valo); },
+            enumerable: true
+        });
+
     }
 
     ngOnInit(): void {
 
-        if (this.disabled == undefined || this.disabled == null) {
-            this.disabled = false;
+        this.datachange.subscribe((valor) => {
+            this.cambiodata();
+        })
+
+        this.formato = this.elementRef.nativeElement.getAttribute('formato');
+        this.disabled = parseBoolean(this.elementRef.nativeElement.getAttribute('disabled'));
+        this.size = parseInt(this.elementRef.nativeElement.getAttribute('size'));
+        this.value = parseFloat(this.elementRef.nativeElement.getAttribute('value'));
+        this.valor_positivo = parseBoolean(this.elementRef.nativeElement.getAttribute('valor_positivo'));
+        this.ondatachange_str = this.elementRef.nativeElement.getAttribute('ondatachange');
+
+        if (this.disabled == true) {
+            this.getdis = "disabled";
+        }
+        else {
+            this.getdis = "";
         }
 
-        if (this.valor_positivo == undefined || this.valor_positivo == null) {
-            this.valor_positivo = false;
-        }
- 
         if (this.formato == undefined) {
-            this.formato = "";
+            this.formato = "###.###";
         }
 
-        if (this.size == undefined) {
+        if (this.size == 0 || isNaN(this.size)) {
             this.size = 15;
         }
 
@@ -60,10 +87,19 @@ export class TreungNumerComponent implements OnInit {
 
     ngAfterViewInit() {
 
-        if (this.value != undefined) {
+        if (isNaN(this.value) == false) {
             this.setvalue(this.value);
         }
 
+    }
+
+    cambiodata() {
+        eval(this.ondatachange_str);
+    }
+
+    setdisabled(valo: boolean) {
+        this.disabled = valo;
+        this.input.nativeElement.disabled = valo;
     }
 
     setvalue(valuex: number) {
@@ -116,12 +152,6 @@ export class TreungNumerComponent implements OnInit {
         }
         serie = str2;
 
-        /*if (this.input.nativeElement == null) {
-            this.pendiente = true;
-            this.pendiente_valor = serie;
-            return;
-        }*/
-
         var cumple = this.validarstringnumerico(serie, this.formato);
 
         if (cumple === false && serie != "") {
@@ -138,8 +168,8 @@ export class TreungNumerComponent implements OnInit {
     }
 
     getvalue() {
-        if (this.input.nativeElement == null) return "";
-        var nume = this.leervalorstr();
+        if (this.input.nativeElement == null) return 0.0;
+        var nume = parseFloat(this.leervalorstr());
         return nume;
     }
 
@@ -217,6 +247,39 @@ export class TreungNumerComponent implements OnInit {
 
         this.input.nativeElement.style.textAlign = "left";
 
+    }
+
+    valcarac(car: string) {
+        var pasa = true;
+        var carsal = '\0';
+        if (car === '0')
+            carsal = car;
+        if (car === '1')
+            carsal = car;
+        if (car === '2')
+            carsal = car;
+        if (car === '3')
+            carsal = car;
+        if (car === '4')
+            carsal = car;
+        if (car === '5')
+            carsal = car;
+        if (car === '6')
+            carsal = car;
+        if (car === '7')
+            carsal = car;
+        if (car === '8')
+            carsal = car;
+        if (car === '9')
+            carsal = car;
+        if (car === '-')
+            carsal = car;
+        if (car === ',')
+            carsal = car;
+        if (carsal === '\0') {
+            pasa = false;
+        }
+        return pasa;
     }
 
     validarstringnumerico(seriex: string, formato: string) {
@@ -372,15 +435,42 @@ export class TreungNumerComponent implements OnInit {
         return true;
     }
 
+    onKeyReleaseTreuNumer(event: any) {
+
+        var code;
+
+        if (this.validarstringnumerico(this.input.nativeElement.value, this.formato) == false) {
+            this.borrar_ultima_pulsacion();
+            if (this.validarstringnumerico(this.input.nativeElement.value, this.formato) == false) {
+                this.borrar_ultima_pulsacion();
+            }
+            event.preventDefault();
+        }
+
+    }
+
+    borrar_ultima_pulsacion() {
+
+        var posicion, texto, nuevo;
+
+        posicion = this.input.nativeElement.selectionStart;
+        texto = this.input.nativeElement.value;
+
+        nuevo = "";
+        nuevo = nuevo + texto.substring(0, posicion - 1);
+        nuevo = nuevo + texto.substring(posicion, texto.length);
+
+        this.input.nativeElement.value = nuevo;
+
+        this.input.nativeElement.selectionStart = posicion - 1;
+        this.input.nativeElement.selectionEnd = posicion - 1;
+    }
+
     onKeyDownTreuNumer(event: any) {
 
         var nuevo, format, posicion, inicial, cumple, termi;
         var i;
         var letra;
-
-        /*if (this.onkeydown != "") {
-            eval(this.onkeydown);
-        }*/
 
         //obj = event.target;
         letra = event.key;
@@ -424,6 +514,7 @@ export class TreungNumerComponent implements OnInit {
         } else if (letra === "Backspace") {
 
             if (posicion > 0 && (posicion == termi)) {
+
                 nuevo = nuevo + inicial.substring(0, posicion - 1);
                 nuevo = nuevo + inicial.substring(posicion, inicial.length);
 
@@ -523,6 +614,33 @@ export class TreungNumerComponent implements OnInit {
 
         if (event.preventDefault) event.preventDefault();
         return false;
+
+    }
+
+    onCutTreuNumer(event: any) {
+
+        var nuevo, format, inicial, posicion, cumple, termi;
+        var i;
+        var letra;
+
+        inicial = this.input.nativeElement.value;
+        format = this.formato;
+        posicion = this.input.nativeElement.selectionStart;
+        termi = this.input.nativeElement.selectionEnd;
+
+        nuevo = "";
+        nuevo = nuevo + inicial.substring(0, posicion);
+        nuevo = nuevo + inicial.substring(termi, inicial.length);
+ 
+        cumple = this.validarstringnumerico(nuevo, format);
+
+        if (cumple === false) {
+            beep();
+            if (event.preventDefault) event.preventDefault();
+            return false;
+        }
+
+        return true;
 
     }
 

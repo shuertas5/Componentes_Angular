@@ -1,3 +1,2 @@
-<input #obj class="form-control" [size]="this.size" [maxLength]="this.maxlength" [disabled]="this.disabled" [value]="this.value"
-    (keydown)="onKeyDownTreuTexto($event)" (paste)="onPasteTreuTexto($event)" (focusout)="onFocusLostTreuTexto($event)"
-    (focusin)="onFocusGainTreuTexto($event)" /><br />
+<input #obj_texto class="form-control" [size]="this.size" [maxLength]="this.maxlength" [disabled]="this.getdis" [value]="this.value" (keydown)="onKeyDownTreuTexto($event)" (keyup)="onKeyReleaseTreuTexto($event)" (paste)="onPasteTreuTexto($event)"
+    (focusout)="onFocusLostTreuTexto($event)" (focusin)="onFocusGainTreuTexto($event)" />

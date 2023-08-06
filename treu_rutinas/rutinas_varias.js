@@ -32,134 +32,6 @@ function acoplarseriemax(ser, lon) {
 
 }
 
-function ajax_submit(form,temporal) {
-
-    $(form).submit(function (event) {
-
-        event.preventDefault();    //prevent default action
-
-        var btn = $(':focus');
-        if (btn.prop('id') != 'submit') {
-            return;
-        }
-
-        var nuevos = "";
-        var primero = true;
-        var valo = "";
-        var aa;
-
-        var etiq = $(form).find('*');
-
-        etiq.each(function (index) {
-
-            if (primero == true) {
-                valo = "";
-            } else {
-                valo = "&";
-            }
-
-            if ($(this).prop('tagName') == "INPUT") {
-                aa = $(this);
-                if (aa.attr("name") != undefined && aa.attr("type") != 'checkbox') {
-                    nuevos += valo + aa.attr('name') + '=' + aa.val().split(" ").join("%20");
-                    primero = false;
-                } else if (aa.attr("name") != undefined && aa.attr("type") == 'checkbox') {
-                    if (aa.is(":checked")) {
-                        nuevos += valo + aa.attr('name') + '=' + aa.val();
-                        primero = false;
-                    }
-                } else if (aa.attr("name") != undefined && aa.attr("type") == 'radio') {
-                    if (aa.is(":checked")) {
-                        nuevos += valo + aa.attr('name') + '=' + aa.val();
-                        primero = false;
-                    }
-                }
-            }
-
-            if ($(this).prop('tagName') == "SELECT") {
-                aa = $(this);
-                if (aa.attr("name") != undefined) {
-                    nuevos += valo + aa.attr('name') + '=' + aa.val();
-                    primero = false;
-                }
-            }
-
-            if ($(this).prop('tagName') == "TREU-TEXTO") {
-                aa = $(this);
-                if (aa.attr("name") != undefined) {
-                    nuevos += valo + aa.attr('name') + '=' + aa.val().split(" ").join("%20");
-                    primero = false;
-                }
-            }
-            if ($(this).prop('tagName') == "TREU-NUMER") {
-                aa = $(this);
-                if (aa.attr("name") != undefined) {
-                    nuevos += valo + aa.attr('name') + '=' + aa.val();
-                    primero = false;
-                }
-            }
-            if ($(this).prop('tagName') == "TREU-COMBODLG") {
-                aa = $(this);
-                if (aa.attr("name") != undefined) {
-                    nuevos += valo + aa.attr('name') + '=' + aa.val().split(" ").join("%20");
-                    primero = false;
-                }
-            }
-            if ($(this).prop('tagName') == "TREU-COMBODLGNUM") {
-                aa = $(this);
-                if (aa.attr("name") != undefined) {
-                    nuevos += valo + aa.attr('name') + '=' + aa.val();
-                    primero = false;
-                }
-            }
-            if ($(this).prop('tagName') == "TREU-FECHA") {
-                aa = $(this);
-                if (aa.attr("name") != undefined) {
-                    nuevos += valo + aa.attr('name') + '=' + aa.val();
-                    primero = false;
-                }
-            }
-            if ($(this).prop('tagName') == "TREU-TEXTAREA") {
-                aa = $(this);
-                if (aa.attr("name") != undefined) {
-                    nuevos += valo + aa.attr('name') + '=' + aa.val().split(" ").join("%20");
-                    primero = false;
-                }
-            }
-            if ($(this).prop('tagName') == "TREU-PASSWORD") {
-                aa = $(this);
-                if (aa.attr("name") != undefined) {
-                    nuevos += valo + aa.attr('name') + '=' + aa.val().split(" ").join("%20");
-                    primero = false;
-                }
-            }
-        });
-
-        event.preventDefault(); //prevent default action
-        var post_url = $(this).attr("action"); //get form action url
-        var request_method = $(this).attr("method"); //get form GET/POST method
-        //var form_data = $(this).serialize()+nuevos; //Encode form elements for submission
-        var form_data = nuevos; //Encode form elements for submission
-
-        $.ajax({
-            url: post_url,
-            type: request_method,
-            async: false,
-            data: form_data
-        }).done(function (response) { //
-            leer_errores(temporal);
-            var ele = $("#mensajes_error").find('.erri');
-            if (ele.length > 0) {
-                $('#mensajes_error').modal({backdrop: 'static', keyboard: false});
-                $("#mensajes_error").modal('show');
-            } else {
-                location.href = './'+temporal+'/blanca.php';
-            }
-        });
-
-    });
-}
-
 function leervalor_str(stri) {
 
     var str, lon, i, str2, numero, car;
@@ -186,23 +58,6 @@ function leervalor_str(stri) {
     return numero;
 }
 
-function leer_errores(temporal) {
-
-    getFileFromServer("./"+temporal+"/errores.txt", function (text) {
-        $('.erri').remove();
-        if (text === null) {
-        } else {
-            var lines = text.split('\n');
-            if (lines.length - 1 > 0) {
-                for (var line = 0; line < lines.length - 1; line++) {
-                    $('.errores').append('<li class="erri list-group-item" >' + lines[line] + '</li>');
-                }
-            }
-        }
-    });
-
-}
-
 function getFileFromServer(url, doneCallback) {
 
     var xhr;
@@ -222,31 +77,31 @@ function getFileFromServer(url, doneCallback) {
 
 function letraacentuada(letra) {
 
-    if (letra=='a') return 'á';
-    if (letra=='e') return 'é';
-    if (letra=='i') return 'í';
-    if (letra=='o') return 'ó';
-    if (letra=='u') return 'ú';
+    if (letra == 'a') return 'á';
+    if (letra == 'e') return 'é';
+    if (letra == 'i') return 'í';
+    if (letra == 'o') return 'ó';
+    if (letra == 'u') return 'ú';
 
-    if (letra=='A') return 'Á';
-    if (letra=='E') return 'É';
-    if (letra=='I') return 'Í';
-    if (letra=='O') return 'Ó';
-    if (letra=='U') return 'Ú';
-    
+    if (letra == 'A') return 'Á';
+    if (letra == 'E') return 'É';
+    if (letra == 'I') return 'Í';
+    if (letra == 'O') return 'Ó';
+    if (letra == 'U') return 'Ú';
+
     return letra;
 
 }
 
-function leer_lista_campos(vector_texto,campo) {
+function leer_lista_campos(vector_texto, campo) {
 
     var str = vector_texto;
-    if (str.indexOf("#[#"+campo+"#]#") >= 0) {
-        var pos = str.indexOf("#[#"+campo+"#]#");
-        var pos_ini=str.indexOf('#[#',pos+("#[#"+campo+"#]#").length);
-        pos_ini+=3;
-        var pos_fin=str.indexOf('#]#',pos_ini);
-        return str.substring(pos_ini,pos_fin);
+    if (str.indexOf("#[#" + campo + "#]#") >= 0) {
+        var pos = str.indexOf("#[#" + campo + "#]#");
+        var pos_ini = str.indexOf('#[#', pos + ("#[#" + campo + "#]#").length);
+        pos_ini += 3;
+        var pos_fin = str.indexOf('#]#', pos_ini);
+        return str.substring(pos_ini, pos_fin);
     }
     return "";
 }
@@ -256,18 +111,15 @@ function beep() {
     snd.play();
 }
 
-function paso_espacios_web(texto)
-{
+function paso_espacios_web(texto) {
     return texto.replace(/ /g, '%20');
 }
 
-function paso_espacios_html(texto)
-{
+function paso_espacios_html(texto) {
     return texto.replace(/ /g, "&nbsp;");
 }
 
-function getFileExtension(filename)
-{
+function getFileExtension(filename) {
     var ext = /^.+\.([^.]+)$/.exec(filename);
     return ext == null ? "" : ext[1];
 }
@@ -289,11 +141,22 @@ function eliminarCookie(key) {
     document.cookie = key + '; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
-function toTimestamp(strDate){  // strDate formato = YYYY-MM-DD
-    var anno=strDate.substring(0,4);
-    var mes = strDate.substring(5,7);
-    var day = strDate.substring(8,10);
-    str=day+'/'+mes+'/'+anno;
+function toTimestamp(strDate) {  // strDate formato = YYYY-MM-DD
+    var anno = strDate.substring(0, 4);
+    var mes = strDate.substring(5, 7);
+    var day = strDate.substring(8, 10);
+    str = day + '/' + mes + '/' + anno;
     var datum = Date.parse(strDate);
-    return datum/1000;
+    return datum / 1000;
+}
+
+function parseBoolean(str) {
+    if ((typeof str) == 'boolean') {
+        return str;
+    } else if ((typeof str) == 'string') {
+        return /^true$/i.test(str);
+        //return str.toLowerCase()==='true';
+    } else {
+        return false;
+    } 
 }

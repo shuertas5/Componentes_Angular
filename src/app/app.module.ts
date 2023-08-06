@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { Injector } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
+import { DoBootstrap } from '@angular/core';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TreungNumerComponent } from './treung-numer/treung-numer.component';
 import { TreungTextoComponent } from './treung-texto/treung-texto.component';
@@ -12,61 +12,58 @@ import { TreungCombodlgnumComponent } from './treung-combodlgnum/treung-combodlg
 import { TreungPasswordComponent } from './treung-password/treung-password.component';
 import { TreungTextareaComponent } from './treung-textarea/treung-textarea.component';
 import { TreungFechaComponent } from './treung-fecha/treung-fecha.component';
+import { FormsModule } from '@angular/forms';
+
+declare var require: any;
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    TreungNumerComponent,
-    TreungTextoComponent,
-    TreungCombodlgComponent,
-    TreungCombodlgnumComponent,
-    TreungPasswordComponent,
-    TreungTextareaComponent,
-    TreungFechaComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
-  exports: [
-    AppComponent,
-    TreungNumerComponent,
-    TreungTextoComponent,
-    TreungCombodlgComponent,
-    TreungCombodlgnumComponent,
-    TreungPasswordComponent,
-    TreungTextareaComponent,
-    TreungFechaComponent
-  ],
-  providers: [],
-  bootstrap: [
-    AppComponent,
-    TreungNumerComponent,
-    TreungTextoComponent,
-    TreungCombodlgComponent,
-    TreungCombodlgnumComponent,
-    TreungPasswordComponent,
-    TreungTextareaComponent,
-    TreungFechaComponent
-  ]
+    declarations: [
+        AppComponent,
+        TreungNumerComponent,
+        TreungTextoComponent,
+        TreungCombodlgComponent,
+        TreungCombodlgnumComponent,
+        TreungPasswordComponent,
+        TreungTextareaComponent,
+        TreungFechaComponent
+    ],
+    imports: [
+        BrowserModule,
+        FormsModule
+    ],
+    exports: [],
+    providers: [],
+    entryComponents: [
+        AppComponent,
+        TreungNumerComponent,
+        TreungTextoComponent,
+        TreungCombodlgComponent,
+        TreungCombodlgnumComponent,
+        TreungPasswordComponent,
+        TreungTextareaComponent,
+        TreungFechaComponent
+    ]
 })
-export class AppModule {
-  constructor(private injector: Injector) {
-    const el1 = createCustomElement(TreungNumerComponent, { injector });
-    customElements.define('treung-numer', el1);
-    const el2 = createCustomElement(TreungTextoComponent, { injector });
-    customElements.define('treung-texto', el2);
-    const el3 = createCustomElement(TreungCombodlgComponent, { injector });
-    customElements.define('treung-combodlg', el3);
-    const el4 = createCustomElement(TreungCombodlgnumComponent, { injector });
-    customElements.define('treung-combodlgnum', el4);
-    const el5 = createCustomElement(TreungPasswordComponent, { injector });
-    customElements.define('treung-password', el5);
-    const el6 = createCustomElement(TreungTextareaComponent, { injector });
-    customElements.define('treung-textarea', el6);
-    const el7 = createCustomElement(TreungFechaComponent, { injector });
-    customElements.define('treung-fecha', el7);
-  }
-  ngDoBootstrap() {}
+export class AppModule implements DoBootstrap {
+    constructor(private injector: Injector) {
+        const el0 = createCustomElement(AppComponent, { injector: this.injector });
+        customElements.define('app-root', el0);
+        const el1 = createCustomElement(TreungNumerComponent, { injector: this.injector });
+        customElements.define('treungc-numer', el1);
+        const el2 = createCustomElement(TreungTextoComponent, { injector: this.injector });
+        customElements.define('treungc-texto', el2);
+        const el3 = createCustomElement(TreungCombodlgComponent, { injector: this.injector });
+        customElements.define('treungc-combodlg', el3);
+        const el4 = createCustomElement(TreungCombodlgnumComponent, { injector: this.injector });
+        customElements.define('treungc-combodlgnum', el4);
+        const el5 = createCustomElement(TreungPasswordComponent, { injector: this.injector });
+        customElements.define('treungc-password', el5);
+        const el6 = createCustomElement(TreungTextareaComponent, { injector: this.injector });
+        customElements.define('treungc-textarea', el6);
+        const el7 = createCustomElement(TreungFechaComponent, { injector: this.injector });
+        customElements.define('treungc-fecha', el7);
+    }
+    ngDoBootstrap(): void {
+    }
 }
 //export class AppModule {}

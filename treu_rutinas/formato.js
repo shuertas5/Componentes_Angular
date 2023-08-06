@@ -2,7 +2,7 @@
    Rutina para Formatear Numeros
    ================================================================ */
 
- function form(format, numero, opcion) {
+function form(format, numero, opcion) {
 
     var minimo, conespacios, blancos, relle, carelle, detras, paren, americano;
     var lon, contx, i, dec, num, forma2, forma, punto, car, ln, recortar, salida, interno;
@@ -23,7 +23,7 @@
 
     ln = opcion.length;
     for (i = 1; i <= ln; i++) {
-        car = opcion.substr(i - 1, 1);
+        car = opcion.substring(i - 1, i);
         if (car == 'm') minimo = true;
         if (car == 'k') conespacios = false;
         if (car == 'B') blancos = true;
@@ -124,6 +124,9 @@
         for (i = 1; i <= lon; i++) {
             forma += '*';
         }
+        if (detras == true || paren == true) {
+            forma += ' ';
+        }
     } else {
         if (num < 0.001 && num > -0.001 && blancos == true) {
             forma = '';
@@ -135,7 +138,7 @@
                 for (i = dec + 1; i > 0; i--) {
                     car = forma.charAt(forma.length - 1);
                     if (car == '0' || car == ',' || car == '.') {
-                        forma = forma.substr(0, forma.length - 1);
+                        forma = forma.substring(0, forma.length - 1);
                     } else {
                         break;
                     }
@@ -159,14 +162,14 @@
 
     if (relle == true) {
         if (negativo == false || detras == true) {
-            var ll=forma.length;
+            var ll = forma.length;
             for (var i = 1; i <= (lon - ll + a); i++) {
                 forma = carelle + forma;
             }
         } else {
             car = forma.charAt(0);
-            forma = foma.substr(1, foma.length - 1);
-            var ll=forma.length;
+            forma = forma.substring(1, forma.length);
+            var ll = forma.length;
             for (var i = 1; i <= lon - ll + a - 1; i++) {
                 forma = carelle + forma;
             }
@@ -175,8 +178,8 @@
     }
 
     if (conespacios == true) {
-        var ll=forma.length;
-        for (i = 1; i <= lon - ll - a; i++) {
+        var ll = forma.length;
+        for (i = 1; i <= lon - ll + a; i++) {
             forma = ' ' + forma;
         }
     }

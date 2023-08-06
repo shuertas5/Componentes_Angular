@@ -10,58 +10,83 @@ declare const beep: any;
 
 export class TreungFechaComponent implements OnInit {
 
-	@ViewChild('obj', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
+	@ViewChild('obj_fecha', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
 
-	@Input() size = 12;
-	//pendiente = false;
-	//pendiente_valor = "";
-	@Input() disabled = false;
+	@Input() id: string;
+	@Input() size: any;
+	@Input() disabled: any;
 	@Input() value: any;
+	getdis: string;
+	ondatachange_str: string;
 
 	@Output()
 	datachange: EventEmitter<string> = new EventEmitter<string>();
 
 	constructor(private elementRef: ElementRef) {
-		this.disabled = parseBoolean(this.elementRef.nativeElement.getAttribute('disabled'));
-		this.size = parseInt(this.elementRef.nativeElement.getAttribute('size'));
-		this.value = this.elementRef.nativeElement.getAttribute('value');
+
+		Object.defineProperty(this.elementRef.nativeElement, 'value', {
+			get: () => { return this.getvalue(); },
+			set: (valo) => { this.setvalue(valo); },
+			enumerable: true
+		});
+
+		Object.defineProperty(this.elementRef.nativeElement, 'id', {
+			get: () => { return this.id; },
+			set: (valo) => { this.id = valo; },
+			enumerable: true
+		});
+
 	}
 
 	ngOnInit(): void {
 
-		if (this.disabled == undefined || this.disabled == null) {
-            this.disabled = false;
+        this.datachange.subscribe((valor)=>{
+            this.cambiodata();
+        })
+        
+        this.id = this.elementRef.nativeElement.getAttribute('id');
+		this.disabled = parseBoolean(this.elementRef.nativeElement.getAttribute('disabled'));
+		this.size = parseInt(this.elementRef.nativeElement.getAttribute('size'));
+		this.value = this.elementRef.nativeElement.getAttribute('value');
+        this.ondatachange_str = this.elementRef.nativeElement.getAttribute('ondatachange');
+
+		if (this.disabled == true) {
+			this.getdis = "disabled";
+		}
+		else {
+			this.getdis = "";
+		}
+
+        if (this.size == 0 || isNaN(this.size)) {
+            this.size = 15;
         }
- 
-        if (this.size == undefined) {
-            this.size = 12;
-        }
+
 	}
 
 	ngAfterViewInit() {
 
-        if (this.value != undefined) {
-            this.setvalue(this.value);
-        }
+		if (this.value != undefined) {
+			this.setvalue(this.value);
+		}
 
-    }
+	}
 
 	setvalue(valuex: any) {
-
-        /*if (obj == null) {
-            this.pendiente = true;
-            this.pendiente_valor = valuex;
-            return;
-        }*/
-
-        this.input.nativeElement.value = valuex;
+		var vali= valuex.substring(0,10);
+		var date = new Date(vali);
+		date.setDate(date.getDate());
+		this.input.nativeElement.valueAsDate = date;
 		this.datachange.emit("datachange");
- 
-    }
 
-    getvalue() {
-        if (this.input.nativeElement == null) return "";
-        return this.input.nativeElement.value;
+	}
+
+	getvalue() {
+		if (this.input.nativeElement == null) return null;
+		return this.input.nativeElement.value;
+	}
+
+    cambiodata() {
+        eval(this.ondatachange_str);
     }
 
 	ondatachange() {

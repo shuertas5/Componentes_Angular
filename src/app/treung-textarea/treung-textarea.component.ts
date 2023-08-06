@@ -11,20 +11,21 @@ declare const beep: any;
 })
 export class TreungTextareaComponent implements OnInit {
 
-    @ViewChild('obj', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
+    @ViewChild('obj_area', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
 
     @Input() maxlength = 0;
     @Input() formato = "";
     @Input() value = "";
-    //pendiente = false;
-    //pendiente_valor = "";
-    @Input() disabled = false;
+    @Input() disabled: boolean;
     @Input() cols = 20;
     @Input() rows = 4;
+    @Input() id: string;
     anterior_arrow = "";
     acento_pulsado = false;
     @Input() rezisable = false;
     dentro = false;
+    getdis: string;
+    ondatachange_str: string;
 
     @Output()
     copy: EventEmitter<string> = new EventEmitter<string>();
@@ -38,6 +39,34 @@ export class TreungTextareaComponent implements OnInit {
     tab: EventEmitter<string> = new EventEmitter<string>();
 
     constructor(private elementRef: ElementRef) {
+
+        Object.defineProperty(this.elementRef.nativeElement, 'value', {
+            get: () => { return this.getvalue(); },
+            set: (valo) => { this.setvalue(valo); },
+            enumerable: true
+        });
+
+        Object.defineProperty(this.elementRef.nativeElement, 'id', {
+            get: () => { return this.id; },
+            set: (valo) => { this.id = valo; },
+            enumerable: true
+        });
+
+        Object.defineProperty(this.elementRef.nativeElement, 'disabled', {
+            get: () => { return this.disabled; },
+            set: (valo) => { this.disabled = valo; this.input.nativeElement.disabled=valo; },
+            enumerable: true
+        });
+
+   }
+
+    ngOnInit(): void {
+
+        this.datachange.subscribe((valor)=>{
+            this.cambiodata();
+        })
+        
+        this.id = this.elementRef.nativeElement.getAttribute('id');
         this.maxlength = parseInt(this.elementRef.nativeElement.getAttribute('maxlength'));
         this.formato = this.elementRef.nativeElement.getAttribute('formato');
         this.disabled = parseBoolean(this.elementRef.nativeElement.getAttribute('disabled'));
@@ -45,12 +74,13 @@ export class TreungTextareaComponent implements OnInit {
         this.rows = parseInt(this.elementRef.nativeElement.getAttribute('rows'));
         this.cols = parseInt(this.elementRef.nativeElement.getAttribute('cols'));
         this.rezisable = parseBoolean(this.elementRef.nativeElement.getAttribute('rezisable'));
-    }
+        this.ondatachange_str = this.elementRef.nativeElement.getAttribute('ondatachange');
 
-    ngOnInit(): void {
-
-        if (this.disabled == undefined || this.disabled == null) {
-            this.disabled = false;
+        if (this.disabled == true) {
+            this.getdis = "disabled";
+        }
+        else {
+            this.getdis = "";
         }
 
         if (this.formato == undefined || this.formato == null) {
@@ -67,13 +97,11 @@ export class TreungTextareaComponent implements OnInit {
 
     }
 
-    setvalue(valuex: string) {
+    cambiodata() {
+        eval(this.ondatachange_str);
+    }
 
-        /*if (this.input.nativeElement.value == null) {
-            this.pendiente = true;
-            this.pendiente_valor = valuex;
-            return;
-        }*/
+    setvalue(valuex: string) {
 
         if (this.maxlength > 0) {
             this.input.nativeElement.value = acoplarseriemax(valuex, this.maxlength);
@@ -93,6 +121,12 @@ export class TreungTextareaComponent implements OnInit {
 
     getvalue() {
         if (this.input.nativeElement.value == null) return "";
+        if (this.formato == "lowercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleLowerCase();
+        }
+        if (this.formato == "uppercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleUpperCase();
+        }
         return this.input.nativeElement.value;
     }
 
@@ -107,6 +141,38 @@ export class TreungTextareaComponent implements OnInit {
     onFocusLostTreuTextArea(e: any) {
 
         this.dentro = false;
+
+    }
+
+    onKeyReleaseTreuTextArea(event: any): boolean {
+
+        var inicial, format, letramod, posicion, termi;
+
+        inicial = this.input.nativeElement.value;
+        format = this.formato;
+        posicion = this.input.nativeElement.selectionStart;
+        termi = this.input.nativeElement.selectionEnd;
+
+        letramod = inicial;
+        if (format.toLowerCase() == "lowercase") {
+            letramod = inicial.toLowerCase();
+            this.input.nativeElement.value = letramod;
+            this.input.nativeElement.selectionStart = posicion;
+            this.input.nativeElement.selectionEnd = posicion;
+            if (event.preventDefault) event.preventDefault();
+            return false;
+        }
+
+        if (format.toLowerCase() == "uppercase") {
+            letramod = inicial.toUpperCase();
+            this.input.nativeElement.value = letramod;
+            this.input.nativeElement.selectionStart = posicion;
+            this.input.nativeElement.selectionEnd = posicion;
+            if (event.preventDefault) event.preventDefault();
+            return false;
+        }
+
+        return true;
 
     }
 
@@ -159,26 +225,29 @@ export class TreungTextareaComponent implements OnInit {
             return true;
         }
 
-       //if (letra=="Dead") {
-        if (event.keyCode == 229) {
-            //this.acento_pulsado = true;
+        //if (letra=="Dead") {
+        if (event.keyCode == 0) {
+            this.acento_pulsado = true;
             event.preventDefault();
             event.stopImmediatePropagation();
             return false;
         }
 
-        inicial = this.input.nativeElement.value;
-        format = this.formato;
         posicion = this.input.nativeElement.selectionStart;
         termi = this.input.nativeElement.selectionEnd;
 
+        if (this.formato == "lowercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleLowerCase();
+        }
+        if (this.formato == "uppercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleUpperCase();
+        }
+
+        inicial = this.input.nativeElement.value;
+        format = this.formato;
+
         nuevo = "";
         if (letra.length == 1) {
-
-            if (this.acento_pulsado==true) {
-                letra=letraacentuada(letra);
-                this.acento_pulsado=false;
-            }
 
             letramod = letra;
             if (format.toLowerCase() == "lowercase") {
@@ -319,6 +388,7 @@ export class TreungTextareaComponent implements OnInit {
                 beep();
             }
             else {
+                if (this.acento_pulsado==true) return false;
                 this.input.nativeElement.value = nuevo;
                 this.input.nativeElement.selectionStart = posicion + letramod.length;
                 this.input.nativeElement.selectionEnd = posicion + letramod.length;
@@ -326,6 +396,7 @@ export class TreungTextareaComponent implements OnInit {
             }
         }
         else {
+            if (this.acento_pulsado==true) return false;
             this.input.nativeElement.value = nuevo;
             this.input.nativeElement.selectionStart = posicion + letramod.length;
             this.input.nativeElement.selectionEnd = posicion + letramod.length;
@@ -338,12 +409,12 @@ export class TreungTextareaComponent implements OnInit {
 
     onCutTreuTextArea(event: any) {
 
-        var selection = this.input.nativeElement.value.substring(this.input.nativeElement.selectionStart,this.input.nativeElement.selectionEnd);
+        var selection = this.input.nativeElement.value.substring(this.input.nativeElement.selectionStart, this.input.nativeElement.selectionEnd);
         event.clipboardData.setData('text/plain', selection.toString());
-        this.input.nativeElement.value=this.input.nativeElement.value.substring(0,this.input.nativeElement.selectionStart)+this.input.nativeElement.value.substring(this.input.nativeElement.selectionEnd)
+        this.input.nativeElement.value = this.input.nativeElement.value.substring(0, this.input.nativeElement.selectionStart) + this.input.nativeElement.value.substring(this.input.nativeElement.selectionEnd)
         event.preventDefault();
         return false;
-        
+
     }
 
     onPasteTreuTextArea(event: any) {

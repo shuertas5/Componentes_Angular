@@ -1,1 +1,4 @@
-<input #obj type="date" (change)="ondatachange();" class="form-control" [value]="this.value" [size]="this.size" [disabled]="this.disabled"/>
+<div class="input-group mb-2" style="margin-bottom: 0px;" >
+    <input #obj_fecha type="date" (change)="ondatachange();" class="form-control" [value]="this.value"
+        [size]="this.size" [disabled]="this.getdis" />
+</div>

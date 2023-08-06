@@ -1,3 +1,3 @@
-<input #obj class="form-control" [size]="this.size" (keydown)="onKeyDownTreuNumer($event)" [disabled]="this.disabled"
-    (paste)="onPasteTreuNumer($event)" (focusout)="onFocusLostTreuNumer($event)"
-    (focusin)="onFocusGainTreuNumer($event)" /><br />
+<input #obj_numer class="form-control" [size]="this.size" (keydown)="onKeyDownTreuNumer($event)" (keyup)="onKeyReleaseTreuNumer($event)"
+    [disabled]="this.getdis" (paste)="onPasteTreuNumer($event)" (cut)="onCutTreuNumer($event)" (focusout)="onFocusLostTreuNumer($event)"
+    (focusin)="onFocusGainTreuNumer($event)"/>

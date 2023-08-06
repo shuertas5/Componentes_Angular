@@ -1,6 +1,7 @@
 {
-  "name": "componentes-angular",
-  "version": "0.0.0",
+  "name": "componentes-treux",
+  "version": "0.0.8",
+  "description": "Paquete de Componentes Treu",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +10,7 @@
     "test": "ng test",
     "build:components": "ng build --configuration production --output-hashing none && node build-component.js"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/animations": "^14.2.0",
     "@angular/common": "^14.2.0",
@@ -20,7 +21,8 @@
     "@angular/platform-browser": "^14.2.0",
     "@angular/platform-browser-dynamic": "^14.2.0",
     "@angular/router": "^14.2.0",
-    "bootstrap": "^3.4.1",
+    "bootstrap": "^4.6.0",
+    "browserify": "^17.0.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

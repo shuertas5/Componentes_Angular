@@ -9,19 +9,21 @@ declare const beep: any;
     templateUrl: './treung-texto.component.html',
     styleUrls: ['./treung-texto.component.scss']
 })
+
 export class TreungTextoComponent implements OnInit {
 
-    @ViewChild('obj', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
+    @ViewChild('obj_texto', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
 
     @Input() maxlength: any;
     @Input() size: any;
-    @Input() formato: any;
-    @Input() value: any;
-    //pendiente = false;
-    //pendiente_valor = "";
-    @Input() disabled = false;
-    acento_pulsado = false;
-    dentro = false;
+    @Input() formato: string;
+    @Input() value: string;
+    @Input() disabled: boolean;
+    @Input() id: string;
+    acento_pulsado: boolean;
+    dentro: boolean;
+    getdis = "";
+    ondatachange_str: string;
 
     @Output()
     copy: EventEmitter<string> = new EventEmitter<string>();
@@ -33,29 +35,61 @@ export class TreungTextoComponent implements OnInit {
     datachange: EventEmitter<string> = new EventEmitter<string>();
 
     constructor(private elementRef: ElementRef) {
+
+        Object.defineProperty(this.elementRef.nativeElement, 'value', {
+            get: () => { return this.getvalue(); },
+            set: (valo) => { this.setvalue(valo); },
+            enumerable: true
+        });
+
+        Object.defineProperty(this.elementRef.nativeElement, 'id', {
+            get: () => { return this.id; },
+            set: (valo) => { this.id = valo; },
+            enumerable: true
+        });
+
+        Object.defineProperty(this.elementRef.nativeElement, 'disabled', {
+            get: () => { return this.disabled; },
+            set: (valo) => { this.setdisabled(valo); },
+            enumerable: true
+        });
+
+    }
+
+    ngOnInit(): void {
+
+        this.datachange.subscribe((valor)=>{
+            this.cambiodata();
+        })
+        
+        this.dentro = false;
+        this.acento_pulsado = false;
+
+        this.id = this.elementRef.nativeElement.getAttribute('id');
         this.maxlength = parseInt(this.elementRef.nativeElement.getAttribute('maxlength'));
         this.formato = this.elementRef.nativeElement.getAttribute('formato');
         this.disabled = parseBoolean(this.elementRef.nativeElement.getAttribute('disabled'));
         this.size = parseInt(this.elementRef.nativeElement.getAttribute('size'));
         this.value = this.elementRef.nativeElement.getAttribute('value');
-    }
+        this.ondatachange_str = this.elementRef.nativeElement.getAttribute('ondatachange');
 
-    ngOnInit(): void {
-
-        if (this.disabled == undefined || this.disabled == null) {
-            this.disabled = false;
+        if (this.disabled == true) {
+            this.getdis = "disabled"
         }
- 
+        else {
+            this.getdis = "";
+        }
+
         if (this.formato == undefined || this.formato == null) {
             this.formato = "";
         }
 
-        if (this.size == undefined) {
+        if (this.size == 0 || isNaN(this.size)) {
             this.size = 15;
         }
 
-        if (this.maxlength == undefined) {
-            this.maxlength = this.size;
+        if (isNaN(this.maxlength)) {
+            this.maxlength = 0;
         }
 
     }
@@ -66,15 +100,9 @@ export class TreungTextoComponent implements OnInit {
             this.setvalue(this.value);
         }
 
-    }
+     }
 
     setvalue(valuex: string) {
-
-        /*if (this.input.nativeElement.value == null) {
-            this.pendiente = true;
-            this.pendiente_valor = valuex;
-            return;
-        }*/
 
         if (this.maxlength > 0) {
             this.input.nativeElement.value = acoplarseriemax(valuex, this.maxlength);
@@ -94,7 +122,18 @@ export class TreungTextoComponent implements OnInit {
 
     getvalue() {
         if (this.input.nativeElement.value == null) return "";
+        if (this.formato == "lowercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleLowerCase();
+        }
+        if (this.formato == "uppercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleUpperCase();
+        }
         return this.input.nativeElement.value;
+    }
+
+    setdisabled(valo: boolean) {
+        this.disabled = valo; 
+        this.input.nativeElement.disabled=valo;
     }
 
     onFocusGainTreuTexto(e: any) {
@@ -111,7 +150,43 @@ export class TreungTextoComponent implements OnInit {
 
     }
 
-    onKeyDownTreuTexto(event: any): boolean {
+    cambiodata() {
+        eval(this.ondatachange_str);
+    }
+
+    onKeyReleaseTreuTexto(event: any): boolean {
+
+        var inicial, format, letramod, posicion, termi;
+
+        inicial = this.input.nativeElement.value;
+        format = this.formato;
+        posicion = this.input.nativeElement.selectionStart;
+        termi = this.input.nativeElement.selectionEnd;
+
+        letramod = inicial;
+        if (format.toLowerCase() == "lowercase") {
+            letramod = inicial.toLowerCase();
+            this.input.nativeElement.value = letramod;
+            this.input.nativeElement.selectionStart = posicion;
+            this.input.nativeElement.selectionEnd = posicion;
+            if (event.preventDefault) event.preventDefault();
+            return false;
+        }
+
+        if (format.toLowerCase() == "uppercase") {
+            letramod = inicial.toUpperCase();
+            this.input.nativeElement.value = letramod;
+            this.input.nativeElement.selectionStart = posicion;
+            this.input.nativeElement.selectionEnd = posicion;
+            if (event.preventDefault) event.preventDefault();
+            return false;
+        }
+
+        return true;
+
+    }
+
+   onKeyDownTreuTexto(event: any): boolean {
 
         var nuevo, format, posicion, inicial, cumple, termi;
         var i;
@@ -142,9 +217,10 @@ export class TreungTextoComponent implements OnInit {
         }
 
         //if (letra=="Dead") {
-        if (event.keyCode == 229) {
-            //this.acento_pulsado = true;
-            event.preventDefault();
+        //alert(event.keyCode);
+        if (event.keyCode == 0) {
+            this.acento_pulsado = true;
+            if (event.preventDefault) event.preventDefault();
             event.stopImmediatePropagation();
             return false;
         }
@@ -154,20 +230,34 @@ export class TreungTextoComponent implements OnInit {
             return true;
         }
 
-        inicial = this.input.nativeElement.value;
-        format = this.formato;
         posicion = this.input.nativeElement.selectionStart;
         termi = this.input.nativeElement.selectionEnd;
 
+        if (this.formato == "lowercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleLowerCase();
+        }
+        if (this.formato == "uppercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleUpperCase();
+        }
+
+        inicial = this.input.nativeElement.value;
+        format = this.formato;
+
         nuevo = "";
-        if (letra.length == 1 || this.acento_pulsado == true) {
+        if (letra=="+" || letra=="&") {
+            beep();
+            if (event.preventDefault) event.preventDefault();
+            return false;
+        } else if (letra.length == 1) {
 
             if (this.acento_pulsado == true) {
-                letra = letraacentuada(letra);
+                //letra = letraacentuada(letra);
                 this.acento_pulsado = false;
+                if (event.preventDefault) event.preventDefault();
+                return false;
             }
 
-            letramod = letra;
+           letramod = letra;
             if (format.toLowerCase() == "lowercase") {
                 letramod = letra.toLocaleLowerCase();
             }
@@ -205,7 +295,7 @@ export class TreungTextoComponent implements OnInit {
                 if (event.preventDefault) event.preventDefault();
                 return false;
             }
-        } else if (letra === "Delete") {
+         } else if (letra === "Delete") {
             if (posicion < inicial.length && posicion == termi) {
                 nuevo = nuevo + inicial.substring(0, posicion);
                 nuevo = nuevo + inicial.substring(posicion + 1, inicial.length);
@@ -243,6 +333,7 @@ export class TreungTextoComponent implements OnInit {
                 beep();
             }
             else {
+                if (this.acento_pulsado==true) return false;
                 this.input.nativeElement.value = nuevo;
                 this.input.nativeElement.selectionStart = posicion + letramod.length;
                 this.input.nativeElement.selectionEnd = posicion + letramod.length;
@@ -250,6 +341,7 @@ export class TreungTextoComponent implements OnInit {
             }
         }
         else {
+            if (this.acento_pulsado==true) return false;
             this.input.nativeElement.value = nuevo;
             this.input.nativeElement.selectionStart = posicion + letramod.length;
             this.input.nativeElement.selectionEnd = posicion + letramod.length;
@@ -317,4 +409,3 @@ export class TreungTextoComponent implements OnInit {
     }
 
 }
-

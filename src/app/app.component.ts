@@ -9,12 +9,11 @@ export class AppComponent {
   
   title = 'Componentes_Angular';
 
-  constructor(private elementRef: ElementRef) {
+  constructor() {
     //this.ondatachange = this.elementRef.nativeElement.getAttribute('ondatachange');
   }
 
   cambios() {
-    //alert("Cambios habidos");
   }
 
   cortada() {

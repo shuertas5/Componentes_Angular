@@ -12,17 +12,18 @@ declare const beep: any;
 
 export class TreungPasswordComponent implements OnInit {
 
-    @ViewChild('obj', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
+    @ViewChild('obj_pass', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
 
+    @Input() id: string;
     @Input() maxlength = 0;
     @Input() size: any;
     @Input() formato: any;
     @Input() value = "";
-    //pendiente = false;
-    //pendiente_valor = "";
     @Input() disabled = false;
     acento_pulsado = false;
     dentro = false;
+    getdis: string;
+    ondatachange_str: string;
 
     @Output()
     copy: EventEmitter<string> = new EventEmitter<string>();
@@ -32,32 +33,62 @@ export class TreungPasswordComponent implements OnInit {
     datachange: EventEmitter<string> = new EventEmitter<string>();
 
     constructor(private elementRef: ElementRef) {
+
+        Object.defineProperty(this.elementRef.nativeElement, 'value', {
+            get: () => { return this.getvalue(); },
+            set: (valo) => { this.setvalue(valo); },
+            enumerable: true
+        });
+
+        Object.defineProperty(this.elementRef.nativeElement, 'id', {
+            get: () => { return this.id; },
+            set: (valo) => { this.id = valo; },
+            enumerable: true
+        });
+
+        Object.defineProperty(this.elementRef.nativeElement, 'disabled', {
+            get: () => { return this.disabled; },
+            set: (valo) => { this.disabled = valo; this.input.nativeElement.disabled = valo; },
+            enumerable: true
+        });
+
+    }
+
+    ngOnInit(): void {
+
+        this.datachange.subscribe((valor) => {
+            this.cambiodata();
+        })
+
+        this.id = this.elementRef.nativeElement.getAttribute('id');
         this.maxlength = parseInt(this.elementRef.nativeElement.getAttribute('maxlength'));
         this.formato = this.elementRef.nativeElement.getAttribute('formato');
         this.disabled = parseBoolean(this.elementRef.nativeElement.getAttribute('disabled'));
         this.size = parseInt(this.elementRef.nativeElement.getAttribute('size'));
         this.value = this.elementRef.nativeElement.getAttribute('value');
-    }
+        this.ondatachange_str = this.elementRef.nativeElement.getAttribute('ondatachange');
 
-    ngOnInit(): void {
-
-        if (this.disabled == undefined || this.disabled == null) {
-            this.disabled = false;
+        if (this.disabled == true) {
+            this.getdis = "disabled";
+        }
+        else {
+            this.getdis = "";
         }
 
         if (this.formato == undefined || this.formato == null) {
             this.formato = "";
         }
 
-        if (this.size == undefined) {
+        if (this.size == 0 || isNaN(this.size)) {
             this.size = 15;
         }
 
-        if (this.maxlength == undefined) {
-            this.maxlength = this.size;
+        if (isNaN(this.maxlength)) {
+            this.maxlength = 0;
         }
 
     }
+
     ngAfterViewInit() {
 
         if (this.value != undefined) {
@@ -66,13 +97,11 @@ export class TreungPasswordComponent implements OnInit {
 
     }
 
-    setvalue(valuex: string) {
+    cambiodata() {
+        eval(this.ondatachange_str);
+    }
 
-        /*if (this.input.nativeElement.value == null) {
-            this.pendiente = true;
-            this.pendiente_valor = valuex;
-            return;
-        }*/
+    setvalue(valuex: string) {
 
         if (this.maxlength > 0) {
             this.input.nativeElement.value = acoplarseriemax(valuex, this.maxlength);
@@ -92,6 +121,12 @@ export class TreungPasswordComponent implements OnInit {
 
     getvalue() {
         if (this.input.nativeElement.value == null) return "";
+        if (this.formato == "lowercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleLowerCase();
+        }
+        if (this.formato == "uppercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleUpperCase();
+        }
         return this.input.nativeElement.value;
     }
 
@@ -106,6 +141,38 @@ export class TreungPasswordComponent implements OnInit {
     onFocusLostTreuPassword(e: any) {
 
         this.dentro = false;
+
+    }
+
+    onKeyReleaseTreuPassword(event: any): boolean {
+
+        var inicial, format, letramod, posicion, termi;
+
+        inicial = this.input.nativeElement.value;
+        format = this.formato;
+        posicion = this.input.nativeElement.selectionStart;
+        termi = this.input.nativeElement.selectionEnd;
+
+        letramod = inicial;
+        if (format.toLowerCase() == "lowercase") {
+            letramod = inicial.toLowerCase();
+            this.input.nativeElement.value = letramod;
+            this.input.nativeElement.selectionStart = posicion;
+            this.input.nativeElement.selectionEnd = posicion;
+            if (event.preventDefault) event.preventDefault();
+            return false;
+        }
+
+        if (format.toLowerCase() == "uppercase") {
+            letramod = inicial.toUpperCase();
+            this.input.nativeElement.value = letramod;
+            this.input.nativeElement.selectionStart = posicion;
+            this.input.nativeElement.selectionEnd = posicion;
+            if (event.preventDefault) event.preventDefault();
+            return false;
+        }
+
+        return true;
 
     }
 
@@ -135,8 +202,8 @@ export class TreungPasswordComponent implements OnInit {
             return true;
         }
 
-        if (event.keyCode == 229) {
-            //this.acento_pulsado = true;
+        if (event.keyCode == 0) {
+            this.acento_pulsado = true;
             event.preventDefault();
             event.stopImmediatePropagation();
             return false;
@@ -147,17 +214,27 @@ export class TreungPasswordComponent implements OnInit {
             return true;
         }
 
-        inicial = this.input.nativeElement.value;
-        format = this.formato;
         posicion = this.input.nativeElement.selectionStart;
         termi = this.input.nativeElement.selectionEnd;
+
+        if (this.formato == "lowercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleLowerCase();
+        }
+        if (this.formato == "uppercase") {
+            this.input.nativeElement.value = this.input.nativeElement.value.toLocaleUpperCase();
+        }
+
+        inicial = this.input.nativeElement.value;
+        format = this.formato;
 
         nuevo = "";
         if (letra.length == 1) {
 
             if (this.acento_pulsado == true) {
-                letra = letraacentuada(letra);
+                //letra = letraacentuada(letra);
                 this.acento_pulsado = false;
+                event.preventDefault();
+                return false;
             }
 
             letramod = letra;
@@ -236,6 +313,7 @@ export class TreungPasswordComponent implements OnInit {
                 beep();
             }
             else {
+                if (this.acento_pulsado==true) return false;
                 this.input.nativeElement.value = nuevo;
                 this.input.nativeElement.selectionStart = posicion + letramod.length;
                 this.input.nativeElement.selectionEnd = posicion + letramod.length;
@@ -243,6 +321,7 @@ export class TreungPasswordComponent implements OnInit {
             }
         }
         else {
+            if (this.acento_pulsado==true) return false;
             this.input.nativeElement.value = nuevo;
             this.input.nativeElement.selectionStart = posicion + letramod.length;
             this.input.nativeElement.selectionEnd = posicion + letramod.length;
