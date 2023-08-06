@@ -1,22 +1,23 @@
-import { Component, OnInit, ElementRef, EventEmitter, Output, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 declare const acoplarseriemax: any;
 declare const letraacentuada: any;
 declare const parseBoolean: any;
 declare const beep: any;
 
 @Component({
-    selector: 'treung-texto',
-    templateUrl: './treung-texto.component.html',
-    styleUrls: ['./treung-texto.component.scss']
+    selector: 'treung-password',
+    templateUrl: './treung-password.component.html',
+    styleUrls: ['./treung-password.component.scss']
 })
-export class TreungTextoComponent implements OnInit {
+
+export class TreungPasswordComponent implements OnInit {
 
     @ViewChild('obj', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
 
-    @Input() maxlength: any;
+    @Input() maxlength = 0;
     @Input() size: any;
     @Input() formato: any;
-    @Input() value: any;
+    @Input() value = "";
     //pendiente = false;
     //pendiente_valor = "";
     @Input() disabled = false;
@@ -27,8 +28,6 @@ export class TreungTextoComponent implements OnInit {
     copy: EventEmitter<string> = new EventEmitter<string>();
     @Output()
     paste: EventEmitter<string> = new EventEmitter<string>();
-    @Output()
-    cut: EventEmitter<string> = new EventEmitter<string>();
     @Output()
     datachange: EventEmitter<string> = new EventEmitter<string>();
 
@@ -45,7 +44,7 @@ export class TreungTextoComponent implements OnInit {
         if (this.disabled == undefined || this.disabled == null) {
             this.disabled = false;
         }
- 
+
         if (this.formato == undefined || this.formato == null) {
             this.formato = "";
         }
@@ -59,7 +58,6 @@ export class TreungTextoComponent implements OnInit {
         }
 
     }
-
     ngAfterViewInit() {
 
         if (this.value != undefined) {
@@ -97,7 +95,7 @@ export class TreungTextoComponent implements OnInit {
         return this.input.nativeElement.value;
     }
 
-    onFocusGainTreuTexto(e: any) {
+    onFocusGainTreuPassword(e: any) {
 
         this.dentro = true;
 
@@ -105,17 +103,21 @@ export class TreungTextoComponent implements OnInit {
 
     }
 
-    onFocusLostTreuTexto(e: any) {
+    onFocusLostTreuPassword(e: any) {
 
         this.dentro = false;
 
     }
 
-    onKeyDownTreuTexto(event: any): boolean {
+    onKeyDownTreuPassword(event: any) {
 
         var nuevo, format, posicion, inicial, cumple, termi;
         var i;
         var letra, letramod;
+
+        /*if (this.onkeydown != "") {
+            eval(this.onkeydown);
+        }*/
 
         letra = event.key;
 
@@ -133,15 +135,6 @@ export class TreungTextoComponent implements OnInit {
             return true;
         }
 
-        // Ctrl+X or Cmd+X pressed?
-        if ((event.ctrlKey || event.metaKey) && event.keyCode == 88) {
-            // Do stuff.
-            this.cut.emit("cut");
-            this.datachange.emit("datachange");
-            return true;
-        }
-
-        //if (letra=="Dead") {
         if (event.keyCode == 229) {
             //this.acento_pulsado = true;
             event.preventDefault();
@@ -160,7 +153,7 @@ export class TreungTextoComponent implements OnInit {
         termi = this.input.nativeElement.selectionEnd;
 
         nuevo = "";
-        if (letra.length == 1 || this.acento_pulsado == true) {
+        if (letra.length == 1) {
 
             if (this.acento_pulsado == true) {
                 letra = letraacentuada(letra);
@@ -168,11 +161,11 @@ export class TreungTextoComponent implements OnInit {
             }
 
             letramod = letra;
-            if (format.toLowerCase() == "lowercase") {
+            if (format.toLocaleLowerCase() == "lowercase") {
                 letramod = letra.toLocaleLowerCase();
             }
 
-            if (format.toLowerCase() == "uppercase") {
+            if (format.toLocaleLowerCase() == "uppercase") {
                 letramod = letra.toLocaleUpperCase();
             }
 
@@ -189,11 +182,11 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion - 1;
                 this.input.nativeElement.selectionEnd = posicion - 1;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             } else if (posicion == 0 && (posicion == termi)) {
                 beep();
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             } else if (posicion != termi) {
                 nuevo = nuevo + inicial.substring(0, posicion);
@@ -202,7 +195,7 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             }
         } else if (letra === "Delete") {
@@ -213,11 +206,11 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             } else if (posicion == inicial.length) {
                 beep();
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             } else if (posicion != termi) {
                 nuevo = nuevo + inicial.substring(0, posicion);
@@ -226,7 +219,7 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             }
         }
@@ -238,8 +231,8 @@ export class TreungTextoComponent implements OnInit {
             nuevo = this.input.nativeElement.value;
         }
 
-        if (this.input.nativeElement.maxLength > 0) {
-            if (nuevo.length > this.input.nativeElement.maxLength) {
+        if (this.maxlength > 0) {
+            if (nuevo.length > this.maxlength) {
                 beep();
             }
             else {
@@ -256,11 +249,11 @@ export class TreungTextoComponent implements OnInit {
             this.datachange.emit("datachange");
         }
 
-        if (event.preventDefault) event.preventDefault();
+        event.preventDefault();
         return false;
     }
 
-    onPasteTreuTexto(event: any) {
+    onPasteTreuPassword(event: any) {
 
         var nuevo, format, inicial, posicion, cumple, termi;
         var i;
@@ -290,8 +283,8 @@ export class TreungTextoComponent implements OnInit {
         nuevo = nuevo + letramod;
         nuevo = nuevo + inicial.substring(termi, inicial.length);
 
-        if (this.input.nativeElement.maxLength > 0) {
-            if (nuevo.length > this.input.nativeElement.maxLength) {
+        if (this.maxlength > 0) {
+            if (nuevo.length > this.maxlength) {
                 beep();
             }
             else {
@@ -299,6 +292,7 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion + letramod.length;
                 this.input.nativeElement.selectionEnd = posicion + letramod.length;
                 this.datachange.emit("datachange");
+
             }
         }
         else {
@@ -306,9 +300,10 @@ export class TreungTextoComponent implements OnInit {
             this.input.nativeElement.selectionStart = posicion + letramod.length;
             this.input.nativeElement.selectionEnd = posicion + letramod.length;
             this.datachange.emit("datachange");
+
         }
 
-        if (event.preventDefault) event.preventDefault();
+        event.preventDefault();
         return false;
     }
 
@@ -317,4 +312,3 @@ export class TreungTextoComponent implements OnInit {
     }
 
 }
-

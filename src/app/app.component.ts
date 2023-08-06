@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,ElementRef,Output,EventEmitter,Input  } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +6,23 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+  
   title = 'Componentes_Angular';
+
+  constructor(private elementRef: ElementRef) {
+    //this.ondatachange = this.elementRef.nativeElement.getAttribute('ondatachange');
+  }
+
+  cambios() {
+    //alert("Cambios habidos");
+  }
+
+  cortada() {
+    //alert("Cortadaaaaaaaaaaaaaaaaaaaaaa");
+  }
+
+  solicitud() {
+    alert("Solicitudddddddddddddddddddd");
+  }
+
 }

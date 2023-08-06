@@ -1,1 +1,3 @@
-<p>treung-numer works!</p>
+<input #obj class="form-control" [size]="this.size" (keydown)="onKeyDownTreuNumer($event)" [disabled]="this.disabled"
+    (paste)="onPasteTreuNumer($event)" (focusout)="onFocusLostTreuNumer($event)"
+    (focusin)="onFocusGainTreuNumer($event)" /><br />

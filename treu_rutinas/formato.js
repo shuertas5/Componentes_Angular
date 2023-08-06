@@ -2,7 +2,7 @@
    Rutina para Formatear Numeros
    ================================================================ */
 
-function form(format, numero, opcion) {
+ function form(format, numero, opcion) {
 
     var minimo, conespacios, blancos, relle, carelle, detras, paren, americano;
     var lon, contx, i, dec, num, forma2, forma, punto, car, ln, recortar, salida, interno;

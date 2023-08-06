@@ -2,7 +2,7 @@
    Rutina para formatear fechas
    ------------------------------------------------------- */
 
-function forfecha(format, obj, opciones) {
+   function forfecha(format, obj, opciones) {
 
     var ln;
     var i;

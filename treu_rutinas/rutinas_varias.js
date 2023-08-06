@@ -289,3 +289,11 @@ function eliminarCookie(key) {
     document.cookie = key + '; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
+function toTimestamp(strDate){  // strDate formato = YYYY-MM-DD
+    var anno=strDate.substring(0,4);
+    var mes = strDate.substring(5,7);
+    var day = strDate.substring(8,10);
+    str=day+'/'+mes+'/'+anno;
+    var datum = Date.parse(strDate);
+    return datum/1000;
+}

@@ -1,26 +1,29 @@
-import { Component, OnInit, ElementRef, EventEmitter, Output, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 declare const acoplarseriemax: any;
 declare const letraacentuada: any;
 declare const parseBoolean: any;
 declare const beep: any;
 
 @Component({
-    selector: 'treung-texto',
-    templateUrl: './treung-texto.component.html',
-    styleUrls: ['./treung-texto.component.scss']
+    selector: 'treung-textarea',
+    templateUrl: './treung-textarea.component.html',
+    styleUrls: ['./treung-textarea.component.scss']
 })
-export class TreungTextoComponent implements OnInit {
+export class TreungTextareaComponent implements OnInit {
 
     @ViewChild('obj', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
 
-    @Input() maxlength: any;
-    @Input() size: any;
-    @Input() formato: any;
-    @Input() value: any;
+    @Input() maxlength = 0;
+    @Input() formato = "";
+    @Input() value = "";
     //pendiente = false;
     //pendiente_valor = "";
     @Input() disabled = false;
+    @Input() cols = 20;
+    @Input() rows = 4;
+    anterior_arrow = "";
     acento_pulsado = false;
+    @Input() rezisable = false;
     dentro = false;
 
     @Output()
@@ -31,13 +34,17 @@ export class TreungTextoComponent implements OnInit {
     cut: EventEmitter<string> = new EventEmitter<string>();
     @Output()
     datachange: EventEmitter<string> = new EventEmitter<string>();
+    @Output()
+    tab: EventEmitter<string> = new EventEmitter<string>();
 
     constructor(private elementRef: ElementRef) {
         this.maxlength = parseInt(this.elementRef.nativeElement.getAttribute('maxlength'));
         this.formato = this.elementRef.nativeElement.getAttribute('formato');
         this.disabled = parseBoolean(this.elementRef.nativeElement.getAttribute('disabled'));
-        this.size = parseInt(this.elementRef.nativeElement.getAttribute('size'));
         this.value = this.elementRef.nativeElement.getAttribute('value');
+        this.rows = parseInt(this.elementRef.nativeElement.getAttribute('rows'));
+        this.cols = parseInt(this.elementRef.nativeElement.getAttribute('cols'));
+        this.rezisable = parseBoolean(this.elementRef.nativeElement.getAttribute('rezisable'));
     }
 
     ngOnInit(): void {
@@ -45,17 +52,9 @@ export class TreungTextoComponent implements OnInit {
         if (this.disabled == undefined || this.disabled == null) {
             this.disabled = false;
         }
- 
+
         if (this.formato == undefined || this.formato == null) {
             this.formato = "";
-        }
-
-        if (this.size == undefined) {
-            this.size = 15;
-        }
-
-        if (this.maxlength == undefined) {
-            this.maxlength = this.size;
         }
 
     }
@@ -97,27 +96,40 @@ export class TreungTextoComponent implements OnInit {
         return this.input.nativeElement.value;
     }
 
-    onFocusGainTreuTexto(e: any) {
+    onFocusGainTreuTextArea(e: any) {
 
         this.dentro = true;
 
-        this.input.nativeElement.select();
+        //this.input.nativeElement.select();
 
     }
 
-    onFocusLostTreuTexto(e: any) {
+    onFocusLostTreuTextArea(e: any) {
 
         this.dentro = false;
 
     }
 
-    onKeyDownTreuTexto(event: any): boolean {
+    onKeyDownTreuTextArea(event: any) {
 
         var nuevo, format, posicion, inicial, cumple, termi;
         var i;
         var letra, letramod;
 
+        /*if (this.onkeydown != "") {
+            eval(this.onkeydown);
+        }*/
+
         letra = event.key;
+
+        if (letra == "Enter") {
+            letra = "\n";
+        }
+
+        if (letra == "Tab") {
+            this.tab.emit("tab");
+            return true;
+        }
 
         // Ctrl+C or Cmd+C pressed?
         if ((event.ctrlKey || event.metaKey) && event.keyCode == 67) {
@@ -138,20 +150,21 @@ export class TreungTextoComponent implements OnInit {
             // Do stuff.
             this.cut.emit("cut");
             this.datachange.emit("datachange");
+            //if (event.preventDefault) event.preventDefault();
             return true;
         }
 
-        //if (letra=="Dead") {
+        if (letra.length > 1 && letra !== "Backspace" && letra !== "Delete" && letra !== "Dead" && letra !== "ArrowLeft" && letra !== "ArrowRight") {
+            if (event.preventDefault) event.preventDefault();
+            return true;
+        }
+
+       //if (letra=="Dead") {
         if (event.keyCode == 229) {
             //this.acento_pulsado = true;
             event.preventDefault();
             event.stopImmediatePropagation();
             return false;
-        }
-
-        if (letra.length > 1 && letra !== "Backspace" && letra !== "Delete" && this.acento_pulsado !== true) {
-            //if (event.preventDefault) event.preventDefault();
-            return true;
         }
 
         inicial = this.input.nativeElement.value;
@@ -160,11 +173,11 @@ export class TreungTextoComponent implements OnInit {
         termi = this.input.nativeElement.selectionEnd;
 
         nuevo = "";
-        if (letra.length == 1 || this.acento_pulsado == true) {
+        if (letra.length == 1) {
 
-            if (this.acento_pulsado == true) {
-                letra = letraacentuada(letra);
-                this.acento_pulsado = false;
+            if (this.acento_pulsado==true) {
+                letra=letraacentuada(letra);
+                this.acento_pulsado=false;
             }
 
             letramod = letra;
@@ -181,6 +194,8 @@ export class TreungTextoComponent implements OnInit {
             nuevo = nuevo + letramod;
             nuevo = nuevo + inicial.substring(termi, inicial.length);
 
+            //this.acento = false;
+
         } else if (letra === "Backspace") {
             if (posicion > 0 && (posicion == termi)) {
                 nuevo = nuevo + inicial.substring(0, posicion - 1);
@@ -189,11 +204,11 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion - 1;
                 this.input.nativeElement.selectionEnd = posicion - 1;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             } else if (posicion == 0 && (posicion == termi)) {
                 beep();
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             } else if (posicion != termi) {
                 nuevo = nuevo + inicial.substring(0, posicion);
@@ -202,7 +217,7 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             }
         } else if (letra === "Delete") {
@@ -213,11 +228,11 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             } else if (posicion == inicial.length) {
                 beep();
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             } else if (posicion != termi) {
                 nuevo = nuevo + inicial.substring(0, posicion);
@@ -226,9 +241,70 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.preventDefault();
                 return false;
             }
+        } else if (letra === "ArrowLeft") {
+            posicion--;
+            if (posicion < 0) {
+                posicion = 0;
+            }
+            if (!event.shiftKey) {
+                this.input.nativeElement.selectionStart = posicion;
+                this.input.nativeElement.selectionEnd = posicion;
+            }
+            else {
+                if (this.input.nativeElement.selectionStart == this.input.nativeElement.selectionEnd) {
+                    this.anterior_arrow = "ArrowLeft";
+                }
+                if (this.anterior_arrow != "ArrowRight") {
+                    this.input.nativeElement.selectionStart = posicion;
+                }
+                else {
+                    termi--;
+                    if (termi >= this.input.nativeElement.selectionStart) {
+                        this.input.nativeElement.selectionEnd = termi;
+                    }
+                    else {
+                        this.anterior_arrow = "ArrowLeft";
+                    }
+                }
+            }
+            nuevo = this.input.nativeElement.value;
+            event.preventDefault();
+            return false;
+        } else if (letra === "ArrowRight") {
+            posicion++;
+            if (posicion > this.input.nativeElement.value.length) {
+                posicion = this.input.nativeElement.value.length;
+            }
+            if (!event.shiftKey) {
+                this.input.nativeElement.selectionStart = posicion;
+                this.input.nativeElement.selectionEnd = posicion;
+            }
+            else {
+                if (this.input.nativeElement.selectionStart == this.input.nativeElement.selectionEnd) {
+                    this.anterior_arrow = "ArrowRight";
+                }
+                if (this.anterior_arrow != "ArrowLeft") {
+                    termi++;
+                    if (termi > this.input.nativeElement.value.length) {
+                        termi = this.input.nativeElement.value.length;
+                    }
+                    this.input.nativeElement.selectionEnd = termi;
+                }
+                else {
+                    if (posicion <= this.input.nativeElement.selectionEnd) {
+                        this.input.nativeElement.selectionStart = posicion;
+                    }
+                    else {
+                        this.anterior_arrow = "ArrowRight";
+                    }
+                }
+            }
+            nuevo = this.input.nativeElement.value;
+            event.preventDefault();
+            return false;
         }
         else if (letra == "Dead") {
             nuevo = this.input.nativeElement.value;
@@ -238,8 +314,8 @@ export class TreungTextoComponent implements OnInit {
             nuevo = this.input.nativeElement.value;
         }
 
-        if (this.input.nativeElement.maxLength > 0) {
-            if (nuevo.length > this.input.nativeElement.maxLength) {
+        if (this.maxlength > 0) {
+            if (nuevo.length > this.maxlength) {
                 beep();
             }
             else {
@@ -256,11 +332,21 @@ export class TreungTextoComponent implements OnInit {
             this.datachange.emit("datachange");
         }
 
-        if (event.preventDefault) event.preventDefault();
+        event.preventDefault();
         return false;
     }
 
-    onPasteTreuTexto(event: any) {
+    onCutTreuTextArea(event: any) {
+
+        var selection = this.input.nativeElement.value.substring(this.input.nativeElement.selectionStart,this.input.nativeElement.selectionEnd);
+        event.clipboardData.setData('text/plain', selection.toString());
+        this.input.nativeElement.value=this.input.nativeElement.value.substring(0,this.input.nativeElement.selectionStart)+this.input.nativeElement.value.substring(this.input.nativeElement.selectionEnd)
+        event.preventDefault();
+        return false;
+        
+    }
+
+    onPasteTreuTextArea(event: any) {
 
         var nuevo, format, inicial, posicion, cumple, termi;
         var i;
@@ -290,8 +376,8 @@ export class TreungTextoComponent implements OnInit {
         nuevo = nuevo + letramod;
         nuevo = nuevo + inicial.substring(termi, inicial.length);
 
-        if (this.input.nativeElement.maxLength > 0) {
-            if (nuevo.length > this.input.nativeElement.maxLength) {
+        if (this.maxlength > 0) {
+            if (nuevo.length > this.maxlength) {
                 beep();
             }
             else {
@@ -299,6 +385,7 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion + letramod.length;
                 this.input.nativeElement.selectionEnd = posicion + letramod.length;
                 this.datachange.emit("datachange");
+
             }
         }
         else {
@@ -306,6 +393,7 @@ export class TreungTextoComponent implements OnInit {
             this.input.nativeElement.selectionStart = posicion + letramod.length;
             this.input.nativeElement.selectionEnd = posicion + letramod.length;
             this.datachange.emit("datachange");
+
         }
 
         if (event.preventDefault) event.preventDefault();
@@ -317,4 +405,3 @@ export class TreungTextoComponent implements OnInit {
     }
 
 }
-
