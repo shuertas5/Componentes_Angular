@@ -631,7 +631,7 @@ export class TreungNumerComponent implements OnInit {
         nuevo = "";
         nuevo = nuevo + inicial.substring(0, posicion);
         nuevo = nuevo + inicial.substring(termi, inicial.length);
- 
+
         cumple = this.validarstringnumerico(nuevo, format);
 
         if (cumple === false) {
@@ -694,7 +694,14 @@ export class TreungNumerComponent implements OnInit {
 
     onFocusLostTreuNumer(e: any) {
 
+        var str;
+
         this.dentro = false;
+
+        str = this.input.nativeElement.value;
+        if (str == '' || str == '-' || str == ',' || str == '.' || str == '-,') {
+            this.input.nativeElement.value = '0';
+        };
 
         this.ponerformato();
 
@@ -707,7 +714,7 @@ export class TreungNumerComponent implements OnInit {
         str = this.input.nativeElement.value;
         format = this.formato;
 
-        if (str == '') return "0.0";
+        if (str == '' || str == '-' || str == ',' || str == '.' || str == '-,') return "0.0";
 
         str2 = '';
         lon = format.length;

@@ -1,6 +1,6 @@
 <div class="input-group mb-2" style="margin-bottom: 0px;">
     <div class="input-group-prepend d-flex justify-content-between">
-        <treung-texto #obj_combo (datachange)="cambiodata();" [attr.formato]="this.formato"
+        <treung-texto #obj_combo (datachange)="cambiodata();" [attr.formato]="this.formato" [attr.placeholder]="this.placeholder"
         [attr.maxlength]="this.maxlength" [attr.size]="this.size" [attr.value]="this.value" [attr.disabled]="this.disabled"></treung-texto>
         <div class="input-group-text" (click)="ondropdown();" [style]="this.cursor">...</div>
     </div>

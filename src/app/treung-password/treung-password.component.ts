@@ -20,6 +20,7 @@ export class TreungPasswordComponent implements OnInit {
     @Input() formato: any;
     @Input() value = "";
     @Input() disabled = false;
+    @Input() placeholder: string;
     acento_pulsado = false;
     dentro = false;
     getdis: string;
@@ -181,10 +182,6 @@ export class TreungPasswordComponent implements OnInit {
         var nuevo, format, posicion, inicial, cumple, termi;
         var i;
         var letra, letramod;
-
-        /*if (this.onkeydown != "") {
-            eval(this.onkeydown);
-        }*/
 
         letra = event.key;
 

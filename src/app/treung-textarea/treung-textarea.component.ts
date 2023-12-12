@@ -20,6 +20,7 @@ export class TreungTextareaComponent implements OnInit {
     @Input() cols = 20;
     @Input() rows = 4;
     @Input() id: string;
+    @Input() placeholder: string;
     anterior_arrow = "";
     acento_pulsado = false;
     @Input() rezisable = false;

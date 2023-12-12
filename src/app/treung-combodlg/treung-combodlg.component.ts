@@ -17,6 +17,7 @@ export class TreungCombodlgComponent implements OnInit {
     @Input() disabled: boolean;
     @Input() editable: boolean;
     @Input() cursor = "";
+    @Input() placeholder: string;
     maxlength = 0;
     size = 0;
     formato = "";

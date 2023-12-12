@@ -20,6 +20,7 @@ export class TreungTextoComponent implements OnInit {
     @Input() value: string;
     @Input() disabled: boolean;
     @Input() id: string;
+    @Input() placeholder: string;
     acento_pulsado: boolean;
     dentro: boolean;
     getdis = "";
