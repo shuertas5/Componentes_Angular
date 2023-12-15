@@ -26,6 +26,7 @@ export class TreungTextareaComponent implements OnInit {
     @Input() rezisable = false;
     dentro = false;
     getdis: string;
+    place: string;
     ondatachange_str: string;
 
     @Output()
@@ -88,7 +89,14 @@ export class TreungTextareaComponent implements OnInit {
             this.formato = "";
         }
 
-    }
+        if (this.placeholder == undefined || this.placeholder == null) {
+            this.place = "";
+        }
+        else {
+            this.place = this.placeholder;
+        }
+
+   }
 
     ngAfterViewInit() {
 

@@ -24,6 +24,7 @@ export class TreungPasswordComponent implements OnInit {
     acento_pulsado = false;
     dentro = false;
     getdis: string;
+    place: string;
     ondatachange_str: string;
 
     @Output()
@@ -78,6 +79,13 @@ export class TreungPasswordComponent implements OnInit {
 
         if (this.formato == undefined || this.formato == null) {
             this.formato = "";
+        }
+
+        if (this.placeholder == undefined || this.placeholder == null) {
+            this.place = "";
+        }
+        else {
+            this.place = this.placeholder;
         }
 
         if (this.size == 0 || isNaN(this.size)) {

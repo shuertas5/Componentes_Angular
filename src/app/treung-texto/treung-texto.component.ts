@@ -24,6 +24,7 @@ export class TreungTextoComponent implements OnInit {
     acento_pulsado: boolean;
     dentro: boolean;
     getdis = "";
+    place="";
     ondatachange_str: string;
 
     @Output()
@@ -59,10 +60,10 @@ export class TreungTextoComponent implements OnInit {
 
     ngOnInit(): void {
 
-        this.datachange.subscribe((valor)=>{
+        this.datachange.subscribe((valor) => {
             this.cambiodata();
         })
-        
+
         this.dentro = false;
         this.acento_pulsado = false;
 
@@ -85,6 +86,13 @@ export class TreungTextoComponent implements OnInit {
             this.formato = "";
         }
 
+        if (this.placeholder == undefined || this.placeholder == null) {
+            this.place = "";
+        }
+        else {
+            this.place = this.placeholder;
+        }
+
         if (this.size == 0 || isNaN(this.size)) {
             this.size = 15;
         }
@@ -101,7 +109,7 @@ export class TreungTextoComponent implements OnInit {
             this.setvalue(this.value);
         }
 
-     }
+    }
 
     setvalue(valuex: string) {
 
@@ -133,8 +141,8 @@ export class TreungTextoComponent implements OnInit {
     }
 
     setdisabled(valo: boolean) {
-        this.disabled = valo; 
-        this.input.nativeElement.disabled=valo;
+        this.disabled = valo;
+        this.input.nativeElement.disabled = valo;
     }
 
     onFocusGainTreuTexto(e: any) {
@@ -187,7 +195,7 @@ export class TreungTextoComponent implements OnInit {
 
     }
 
-   onKeyDownTreuTexto(event: any): boolean {
+    onKeyDownTreuTexto(event: any): boolean {
 
         var nuevo, format, posicion, inicial, cumple, termi;
         var i;
@@ -245,7 +253,7 @@ export class TreungTextoComponent implements OnInit {
         format = this.formato;
 
         nuevo = "";
-        if (letra=="+" || letra=="&") {
+        if (letra == "+" || letra == "&") {
             beep();
             if (event.preventDefault) event.preventDefault();
             return false;
@@ -258,7 +266,7 @@ export class TreungTextoComponent implements OnInit {
                 return false;
             }
 
-           letramod = letra;
+            letramod = letra;
             if (format.toLowerCase() == "lowercase") {
                 letramod = letra.toLocaleLowerCase();
             }
@@ -296,7 +304,7 @@ export class TreungTextoComponent implements OnInit {
                 if (event.preventDefault) event.preventDefault();
                 return false;
             }
-         } else if (letra === "Delete") {
+        } else if (letra === "Delete") {
             if (posicion < inicial.length && posicion == termi) {
                 nuevo = nuevo + inicial.substring(0, posicion);
                 nuevo = nuevo + inicial.substring(posicion + 1, inicial.length);
@@ -334,7 +342,7 @@ export class TreungTextoComponent implements OnInit {
                 beep();
             }
             else {
-                if (this.acento_pulsado==true) return false;
+                if (this.acento_pulsado == true) return false;
                 this.input.nativeElement.value = nuevo;
                 this.input.nativeElement.selectionStart = posicion + letramod.length;
                 this.input.nativeElement.selectionEnd = posicion + letramod.length;
@@ -342,7 +350,7 @@ export class TreungTextoComponent implements OnInit {
             }
         }
         else {
-            if (this.acento_pulsado==true) return false;
+            if (this.acento_pulsado == true) return false;
             this.input.nativeElement.value = nuevo;
             this.input.nativeElement.selectionStart = posicion + letramod.length;
             this.input.nativeElement.selectionEnd = posicion + letramod.length;

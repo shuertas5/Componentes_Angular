@@ -1,5 +1,5 @@
 <div class="input-group mb-2" style="margin-bottom: 0px;">
-    <textarea #obj_area class="form-control" autocomplete="off" [cols]="this.cols" [rows]="this.rows" [placeholder]="this.placeholder"
+    <textarea #obj_area class="form-control" autocomplete="off" [cols]="this.cols" [rows]="this.rows" [placeholder]="this.place"
         [disabled]="this.getdis" (keydown)="onKeyDownTreuTextArea($event)" (keyup)="onKeyReleaseTreuTextArea($event)" (paste)="onPasteTreuTextArea($event)"
         (cut)="onCutTreuTextArea($event)" (focusout)="onFocusLostTreuTextArea($event)"
         (focusin)="onFocusGainTreuTextArea($event)">{{this.value}}</textarea>
