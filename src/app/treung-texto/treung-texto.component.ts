@@ -178,7 +178,8 @@ export class TreungTextoComponent implements OnInit {
             this.input.nativeElement.value = letramod;
             this.input.nativeElement.selectionStart = posicion;
             this.input.nativeElement.selectionEnd = posicion;
-            if (event.preventDefault) event.preventDefault();
+            event.stopImmediatePropagation();
+            event.preventDefault();
             return false;
         }
 
@@ -187,7 +188,8 @@ export class TreungTextoComponent implements OnInit {
             this.input.nativeElement.value = letramod;
             this.input.nativeElement.selectionStart = posicion;
             this.input.nativeElement.selectionEnd = posicion;
-            if (event.preventDefault) event.preventDefault();
+            event.stopImmediatePropagation();
+            event.preventDefault();
             return false;
         }
 
@@ -229,8 +231,8 @@ export class TreungTextoComponent implements OnInit {
         //alert(event.keyCode);
         if (event.keyCode == 0) {
             this.acento_pulsado = true;
-            if (event.preventDefault) event.preventDefault();
             event.stopImmediatePropagation();
+            event.preventDefault();
             return false;
         }
 
@@ -255,14 +257,16 @@ export class TreungTextoComponent implements OnInit {
         nuevo = "";
         if (letra == "+" || letra == "&") {
             beep();
-            if (event.preventDefault) event.preventDefault();
+            event.stopImmediatePropagation();
+            event.preventDefault();
             return false;
         } else if (letra.length == 1) {
 
             if (this.acento_pulsado == true) {
                 //letra = letraacentuada(letra);
                 this.acento_pulsado = false;
-                if (event.preventDefault) event.preventDefault();
+                event.stopImmediatePropagation();
+                event.preventDefault();
                 return false;
             }
 
@@ -288,7 +292,8 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion - 1;
                 this.input.nativeElement.selectionEnd = posicion - 1;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.stopImmediatePropagation();
+                event.preventDefault();
                 return false;
             } else if (posicion == 0 && (posicion == termi)) {
                 beep();
@@ -301,7 +306,8 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.stopImmediatePropagation();
+                event.preventDefault();
                 return false;
             }
         } else if (letra === "Delete") {
@@ -312,11 +318,13 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.stopImmediatePropagation();
+                event.preventDefault();
                 return false;
             } else if (posicion == inicial.length) {
                 beep();
-                if (event.preventDefault) event.preventDefault();
+                event.stopImmediatePropagation();
+                event.preventDefault();
                 return false;
             } else if (posicion != termi) {
                 nuevo = nuevo + inicial.substring(0, posicion);
@@ -325,7 +333,8 @@ export class TreungTextoComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
-                if (event.preventDefault) event.preventDefault();
+                event.stopImmediatePropagation();
+                event.preventDefault();
                 return false;
             }
         }
@@ -357,7 +366,8 @@ export class TreungTextoComponent implements OnInit {
             this.datachange.emit("datachange");
         }
 
-        if (event.preventDefault) event.preventDefault();
+        event.stopImmediatePropagation();
+        event.preventDefault();
         return false;
     }
 
@@ -409,7 +419,8 @@ export class TreungTextoComponent implements OnInit {
             this.datachange.emit("datachange");
         }
 
-        if (event.preventDefault) event.preventDefault();
+        event.stopImmediatePropagation();
+        event.preventDefault();
         return false;
     }
 

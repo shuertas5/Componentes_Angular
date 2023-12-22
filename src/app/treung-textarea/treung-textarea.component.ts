@@ -168,7 +168,8 @@ export class TreungTextareaComponent implements OnInit {
             this.input.nativeElement.value = letramod;
             this.input.nativeElement.selectionStart = posicion;
             this.input.nativeElement.selectionEnd = posicion;
-            if (event.preventDefault) event.preventDefault();
+            event.stopImmediatePropagation();
+            event.preventDefault();
             return false;
         }
 
@@ -177,7 +178,8 @@ export class TreungTextareaComponent implements OnInit {
             this.input.nativeElement.value = letramod;
             this.input.nativeElement.selectionStart = posicion;
             this.input.nativeElement.selectionEnd = posicion;
-            if (event.preventDefault) event.preventDefault();
+            event.stopImmediatePropagation();
+            event.preventDefault();
             return false;
         }
 
@@ -230,7 +232,7 @@ export class TreungTextareaComponent implements OnInit {
         }
 
         if (letra.length > 1 && letra !== "Backspace" && letra !== "Delete" && letra !== "Dead" && letra !== "ArrowLeft" && letra !== "ArrowRight") {
-            if (event.preventDefault) event.preventDefault();
+            //event.preventDefault();
             return true;
         }
 
@@ -282,10 +284,12 @@ export class TreungTextareaComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion - 1;
                 this.input.nativeElement.selectionEnd = posicion - 1;
                 this.datachange.emit("datachange");
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             } else if (posicion == 0 && (posicion == termi)) {
                 beep();
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             } else if (posicion != termi) {
@@ -295,6 +299,7 @@ export class TreungTextareaComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             }
@@ -306,10 +311,12 @@ export class TreungTextareaComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             } else if (posicion == inicial.length) {
                 beep();
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             } else if (posicion != termi) {
@@ -319,6 +326,7 @@ export class TreungTextareaComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             }
@@ -349,6 +357,7 @@ export class TreungTextareaComponent implements OnInit {
                 }
             }
             nuevo = this.input.nativeElement.value;
+            event.stopImmediatePropagation();
             event.preventDefault();
             return false;
         } else if (letra === "ArrowRight") {
@@ -381,6 +390,7 @@ export class TreungTextareaComponent implements OnInit {
                 }
             }
             nuevo = this.input.nativeElement.value;
+            event.stopImmediatePropagation();
             event.preventDefault();
             return false;
         }
@@ -412,6 +422,7 @@ export class TreungTextareaComponent implements OnInit {
             this.datachange.emit("datachange");
         }
 
+        event.stopImmediatePropagation();
         event.preventDefault();
         return false;
     }
@@ -421,6 +432,7 @@ export class TreungTextareaComponent implements OnInit {
         var selection = this.input.nativeElement.value.substring(this.input.nativeElement.selectionStart, this.input.nativeElement.selectionEnd);
         event.clipboardData.setData('text/plain', selection.toString());
         this.input.nativeElement.value = this.input.nativeElement.value.substring(0, this.input.nativeElement.selectionStart) + this.input.nativeElement.value.substring(this.input.nativeElement.selectionEnd)
+        event.stopImmediatePropagation();
         event.preventDefault();
         return false;
 
@@ -476,7 +488,8 @@ export class TreungTextareaComponent implements OnInit {
 
         }
 
-        if (event.preventDefault) event.preventDefault();
+        event.stopImmediatePropagation();
+        event.preventDefault();
         return false;
     }
 

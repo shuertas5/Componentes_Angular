@@ -168,7 +168,8 @@ export class TreungPasswordComponent implements OnInit {
             this.input.nativeElement.value = letramod;
             this.input.nativeElement.selectionStart = posicion;
             this.input.nativeElement.selectionEnd = posicion;
-            if (event.preventDefault) event.preventDefault();
+            event.stopImmediatePropagation();
+            event.preventDefault();
             return false;
         }
 
@@ -177,7 +178,8 @@ export class TreungPasswordComponent implements OnInit {
             this.input.nativeElement.value = letramod;
             this.input.nativeElement.selectionStart = posicion;
             this.input.nativeElement.selectionEnd = posicion;
-            if (event.preventDefault) event.preventDefault();
+            event.stopImmediatePropagation();
+            event.preventDefault();
             return false;
         }
 
@@ -238,6 +240,7 @@ export class TreungPasswordComponent implements OnInit {
             if (this.acento_pulsado == true) {
                 //letra = letraacentuada(letra);
                 this.acento_pulsado = false;
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             }
@@ -264,10 +267,12 @@ export class TreungPasswordComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion - 1;
                 this.input.nativeElement.selectionEnd = posicion - 1;
                 this.datachange.emit("datachange");
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             } else if (posicion == 0 && (posicion == termi)) {
                 beep();
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             } else if (posicion != termi) {
@@ -277,6 +282,7 @@ export class TreungPasswordComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             }
@@ -288,10 +294,12 @@ export class TreungPasswordComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             } else if (posicion == inicial.length) {
                 beep();
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             } else if (posicion != termi) {
@@ -301,6 +309,7 @@ export class TreungPasswordComponent implements OnInit {
                 this.input.nativeElement.selectionStart = posicion;
                 this.input.nativeElement.selectionEnd = posicion;
                 this.datachange.emit("datachange");
+                event.stopImmediatePropagation();
                 event.preventDefault();
                 return false;
             }
@@ -333,6 +342,7 @@ export class TreungPasswordComponent implements OnInit {
             this.datachange.emit("datachange");
         }
 
+        event.stopImmediatePropagation();
         event.preventDefault();
         return false;
     }
@@ -387,6 +397,7 @@ export class TreungPasswordComponent implements OnInit {
 
         }
 
+        event.stopImmediatePropagation();
         event.preventDefault();
         return false;
     }
