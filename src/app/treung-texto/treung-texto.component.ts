@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, EventEmitter, Output, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef, EventEmitter, Output, ViewChild, Input } from '@angular/core';
 declare const acoplarseriemax: any;
 declare const letraacentuada: any;
 declare const parseBoolean: any;
@@ -10,7 +10,7 @@ declare const beep: any;
     styleUrls: ['./treung-texto.component.scss']
 })
 
-export class TreungTextoComponent implements OnInit {
+export class TreungTextoComponent {
 
     @ViewChild('obj_texto', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
 
@@ -24,7 +24,7 @@ export class TreungTextoComponent implements OnInit {
     acento_pulsado: boolean;
     dentro: boolean;
     getdis = "";
-    place="";
+    place = "";
     ondatachange_str: string;
 
     @Output()
@@ -163,7 +163,8 @@ export class TreungTextoComponent implements OnInit {
         eval(this.ondatachange_str);
     }
 
-    onKeyReleaseTreuTexto(event: any): boolean {
+    @HostListener('keyup', ['$event'])
+    onKeyReleaseTreuTexto(event: KeyboardEvent): boolean {
 
         var inicial, format, letramod, posicion, termi;
 
@@ -197,7 +198,8 @@ export class TreungTextoComponent implements OnInit {
 
     }
 
-    onKeyDownTreuTexto(event: any): boolean {
+    @HostListener('keydown', ['$event'])
+    onKeyDownTreuTexto(event: KeyboardEvent): boolean {
 
         var nuevo, format, posicion, inicial, cumple, termi;
         var i;
@@ -253,6 +255,7 @@ export class TreungTextoComponent implements OnInit {
 
         inicial = this.input.nativeElement.value;
         format = this.formato;
+        letramod = letra;
 
         nuevo = "";
         if (letra == "+" || letra == "&") {
@@ -270,7 +273,6 @@ export class TreungTextoComponent implements OnInit {
                 return false;
             }
 
-            letramod = letra;
             if (format.toLowerCase() == "lowercase") {
                 letramod = letra.toLocaleLowerCase();
             }
@@ -346,9 +348,10 @@ export class TreungTextoComponent implements OnInit {
             nuevo = this.input.nativeElement.value;
         }
 
-        if (this.input.nativeElement.maxLength > 0) {
-            if (nuevo.length > this.input.nativeElement.maxLength) {
+        if (this.maxlength > 0) {
+            if (nuevo.length > this.maxlength) {
                 beep();
+                this.input.nativeElement.value = inicial;
             }
             else {
                 if (this.acento_pulsado == true) return false;
@@ -371,16 +374,22 @@ export class TreungTextoComponent implements OnInit {
         return false;
     }
 
-    onPasteTreuTexto(event: any) {
+    @HostListener('paste', ['$event'])
+    onPasteTreuTexto(event: ClipboardEvent) {
 
         var nuevo, format, inicial, posicion, cumple, termi;
         var i;
         var letra, letramod;
 
-        letra = event.clipboardData.getData('Text');
+        if (event.clipboardData != null) {
+            letra = event.clipboardData.getData('Text');
+        }
+        else {
+            letra = "";
+        }
 
         if (letra.length == 0)
-            return true;
+            return;
 
         inicial = this.input.nativeElement.value;
         format = this.formato;
@@ -401,9 +410,10 @@ export class TreungTextoComponent implements OnInit {
         nuevo = nuevo + letramod;
         nuevo = nuevo + inicial.substring(termi, inicial.length);
 
-        if (this.input.nativeElement.maxLength > 0) {
-            if (nuevo.length > this.input.nativeElement.maxLength) {
+        if (this.maxlength > 0) {
+            if (nuevo.length > this.maxlength) {
                 beep();
+                this.input.nativeElement.value = inicial;
             }
             else {
                 this.input.nativeElement.value = nuevo;
@@ -421,7 +431,7 @@ export class TreungTextoComponent implements OnInit {
 
         event.stopImmediatePropagation();
         event.preventDefault();
-        return false;
+        return;
     }
 
     focus() {

@@ -405,6 +405,7 @@ export class TreungTextareaComponent implements OnInit {
         if (this.maxlength > 0) {
             if (nuevo.length > this.maxlength) {
                 beep();
+                this.input.nativeElement.value = inicial;
             }
             else {
                 if (this.acento_pulsado==true) return false;
@@ -471,6 +472,7 @@ export class TreungTextareaComponent implements OnInit {
         if (this.maxlength > 0) {
             if (nuevo.length > this.maxlength) {
                 beep();
+                this.input.nativeElement.value = inicial;
             }
             else {
                 this.input.nativeElement.value = nuevo;

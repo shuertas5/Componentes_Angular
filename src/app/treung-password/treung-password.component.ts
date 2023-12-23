@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, HostListener, Input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 declare const acoplarseriemax: any;
 declare const letraacentuada: any;
 declare const parseBoolean: any;
@@ -10,7 +10,7 @@ declare const beep: any;
     styleUrls: ['./treung-password.component.scss']
 })
 
-export class TreungPasswordComponent implements OnInit {
+export class TreungPasswordComponent {
 
     @ViewChild('obj_pass', { static: false }) input: ElementRef; // remove { static: false } if you're using Angular < 8 
 
@@ -153,7 +153,8 @@ export class TreungPasswordComponent implements OnInit {
 
     }
 
-    onKeyReleaseTreuPassword(event: any): boolean {
+    @HostListener('keyup', ['$event'])
+    onKeyReleaseTreuPassword(event: KeyboardEvent): boolean {
 
         var inicial, format, letramod, posicion, termi;
 
@@ -187,7 +188,8 @@ export class TreungPasswordComponent implements OnInit {
 
     }
 
-    onKeyDownTreuPassword(event: any) {
+    @HostListener('keydown', ['$event'])
+    onKeyDownTreuPassword(event: KeyboardEvent): boolean {
 
         var nuevo, format, posicion, inicial, cumple, termi;
         var i;
@@ -233,6 +235,7 @@ export class TreungPasswordComponent implements OnInit {
 
         inicial = this.input.nativeElement.value;
         format = this.formato;
+        letramod = letra;
 
         nuevo = "";
         if (letra.length == 1) {
@@ -245,7 +248,6 @@ export class TreungPasswordComponent implements OnInit {
                 return false;
             }
 
-            letramod = letra;
             if (format.toLocaleLowerCase() == "lowercase") {
                 letramod = letra.toLocaleLowerCase();
             }
@@ -325,6 +327,7 @@ export class TreungPasswordComponent implements OnInit {
         if (this.maxlength > 0) {
             if (nuevo.length > this.maxlength) {
                 beep();
+                this.input.nativeElement.value = inicial;
             }
             else {
                 if (this.acento_pulsado==true) return false;
@@ -347,13 +350,19 @@ export class TreungPasswordComponent implements OnInit {
         return false;
     }
 
-    onPasteTreuPassword(event: any) {
+    @HostListener('paste', ['$event'])
+    onPasteTreuPassword(event: ClipboardEvent) {
 
         var nuevo, format, inicial, posicion, cumple, termi;
         var i;
         var letra, letramod;
 
-        letra = event.clipboardData.getData('Text');
+        if (event.clipboardData!=null) {
+            letra = event.clipboardData.getData('Text');
+        }
+        else {
+            letra="";
+        }
 
         if (letra.length == 0)
             return true;
@@ -380,6 +389,7 @@ export class TreungPasswordComponent implements OnInit {
         if (this.maxlength > 0) {
             if (nuevo.length > this.maxlength) {
                 beep();
+                this.input.nativeElement.value = inicial;
             }
             else {
                 this.input.nativeElement.value = nuevo;
@@ -399,7 +409,7 @@ export class TreungPasswordComponent implements OnInit {
 
         event.stopImmediatePropagation();
         event.preventDefault();
-        return false;
+        return;
     }
 
     focus() {
