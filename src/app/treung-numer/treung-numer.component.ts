@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef, Output, EventEmitter, Input } from '@angular/core';
 declare const form: any;
 declare const parseBoolean: any;
 declare const beep: any;
@@ -435,7 +435,8 @@ export class TreungNumerComponent implements OnInit {
         return true;
     }
 
-    onKeyReleaseTreuNumer(event: any) {
+    @HostListener('keyup', ['$event'])
+    onKeyReleaseTreuNumer(event: KeyboardEvent): boolean {
 
         var code;
 
@@ -445,8 +446,10 @@ export class TreungNumerComponent implements OnInit {
                 this.borrar_ultima_pulsacion();
             }
             event.preventDefault();
+            return false;
         }
 
+        return true;
     }
 
     borrar_ultima_pulsacion() {
@@ -466,7 +469,8 @@ export class TreungNumerComponent implements OnInit {
         this.input.nativeElement.selectionEnd = posicion - 1;
     }
 
-    onKeyDownTreuNumer(event: any) {
+    @HostListener('keydown', ['$event'])
+    onKeyDownTreuNumer(event: KeyboardEvent): boolean {
 
         var nuevo, format, posicion, inicial, cumple, termi;
         var i;
@@ -617,7 +621,8 @@ export class TreungNumerComponent implements OnInit {
 
     }
 
-    onCutTreuNumer(event: any) {
+    @HostListener('cut', ['$event'])
+    onCutTreuNumer(event: ClipboardEvent) {
 
         var nuevo, format, inicial, posicion, cumple, termi;
         var i;
@@ -644,13 +649,19 @@ export class TreungNumerComponent implements OnInit {
 
     }
 
-    onPasteTreuNumer(event: any) {
+    @HostListener('paste', ['$event'])
+    onPasteTreuNumer(event: ClipboardEvent) {
 
         var nuevo, format, inicial, posicion, cumple, termi;
         var i;
         var letra;
 
-        letra = event.clipboardData.getData('Text');
+        if (event.clipboardData != null) {
+            letra = event.clipboardData.getData('Text');
+        }
+        else {
+            letra = "";
+        }
 
         if (letra.length == 0) return true;
 

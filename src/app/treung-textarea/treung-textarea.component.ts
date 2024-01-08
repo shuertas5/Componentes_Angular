@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, HostListener, Input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 declare const acoplarseriemax: any;
 declare const letraacentuada: any;
 declare const parseBoolean: any;
@@ -153,7 +153,8 @@ export class TreungTextareaComponent implements OnInit {
 
     }
 
-    onKeyReleaseTreuTextArea(event: any): boolean {
+    @HostListener('keyup', ['$event'])
+    onKeyReleaseTreuTextArea(event: KeyboardEvent): boolean {
 
         var inicial, format, letramod, posicion, termi;
 
@@ -187,7 +188,8 @@ export class TreungTextareaComponent implements OnInit {
 
     }
 
-    onKeyDownTreuTextArea(event: any) {
+    @HostListener('keydown', ['$event'])
+    onKeyDownTreuTextArea(event: KeyboardEvent): boolean {
 
         var nuevo, format, posicion, inicial, cumple, termi;
         var i;
@@ -256,6 +258,7 @@ export class TreungTextareaComponent implements OnInit {
 
         inicial = this.input.nativeElement.value;
         format = this.formato;
+        letramod = letra;
 
         nuevo = "";
         if (letra.length == 1) {
@@ -428,24 +431,33 @@ export class TreungTextareaComponent implements OnInit {
         return false;
     }
 
-    onCutTreuTextArea(event: any) {
+    @HostListener('cut', ['$event'])
+    onCutTreuTextArea(event: ClipboardEvent) {
 
         var selection = this.input.nativeElement.value.substring(this.input.nativeElement.selectionStart, this.input.nativeElement.selectionEnd);
-        event.clipboardData.setData('text/plain', selection.toString());
-        this.input.nativeElement.value = this.input.nativeElement.value.substring(0, this.input.nativeElement.selectionStart) + this.input.nativeElement.value.substring(this.input.nativeElement.selectionEnd)
-        event.stopImmediatePropagation();
-        event.preventDefault();
-        return false;
+        if (event.clipboardData != null) {
+            event.clipboardData.setData('text/plain', selection.toString());
+            this.input.nativeElement.value = this.input.nativeElement.value.substring(0, this.input.nativeElement.selectionStart) + this.input.nativeElement.value.substring(this.input.nativeElement.selectionEnd)
+            event.stopImmediatePropagation();
+            event.preventDefault();
+            return;
+        }
 
     }
 
-    onPasteTreuTextArea(event: any) {
+    @HostListener('paste', ['$event'])
+    onPasteTreuTextArea(event: ClipboardEvent) {
 
         var nuevo, format, inicial, posicion, cumple, termi;
         var i;
         var letra, letramod;
 
-        letra = event.clipboardData.getData('Text');
+        if (event.clipboardData != null) {
+            letra = event.clipboardData.getData('Text');
+        }
+        else {
+            letra = "";
+        }
 
         if (letra.length == 0)
             return true;
